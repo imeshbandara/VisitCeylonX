@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const placeSchema = new mongoos.Schema({
+const placeSchema = new mongoose.Schema({
     name: { type: String , required: true},
     description:{ type:String , required:true},
     district:{ type:String , required:true},
@@ -13,4 +13,4 @@ const placeSchema = new mongoos.Schema({
     }
 },{ timestamp: true});
 
-export default mongoos.model('Place',placeshema);
+export default mongoose.model('Place',placeSchema);

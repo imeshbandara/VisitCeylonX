@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import placeRoutes from './routes/placeRoutes.js';
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ mongoose.connect(process.env.MONGO_URI)
 .then(()=> console.log("VisitCeylonX Database Connected Successfully! ✅"))
 .catch(err=>console.log("DB connection error :", err));
 
+app.use('/api/places',placeRoutes);
+
 //basic route
 app.get('/' , (req,res)=>{
     res.send("VisitCeyloneX Backend API is running...");
@@ -23,7 +26,7 @@ app.get('/' , (req,res)=>{
 //port setting
 const PORT = process.env.PORT || 5002;
 app.listen(PORT , ()=>{
-    console.log('server is running on port ${PORT}');
+    console.log('server is running on port 5002');
 });
 
 //username = visitslone
