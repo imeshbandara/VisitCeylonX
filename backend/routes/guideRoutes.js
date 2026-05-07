@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 
 // 2. POST a new guide (Registration)
 router.post('/register', async (req, res) => {
-    const { fullName, languages, contact, experience, profileImage } = req.body;
+    const { fullName, languages, contact, experience, profileImage,isAvailable,rating } = req.body;
 
     const newGuide = new Guide({
         fullName,

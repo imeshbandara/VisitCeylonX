@@ -14,3 +14,5 @@ const guideSchema = new mongoose.Schema({
 }, { timestamps: true });
 /*{ timestamps: true }
 It automatically records WHEN each record is created and last updated.*/
+
+export default mongoose.model('Guide', guideSchema);

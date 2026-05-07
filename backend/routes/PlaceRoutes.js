@@ -28,11 +28,7 @@ router.post('/',async (req,res)=>
         district,
         category,
         imageUrl,
-        estimatedCosts:{
-                         transport,
-                         entranceFees,
-                         food
-    }
+        estimatedCosts
     });
 
     try{

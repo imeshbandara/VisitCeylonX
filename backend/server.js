@@ -2,7 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+
+
 import placeRoutes from './routes/placeRoutes.js';
+import guideRoutes from './routes/guideRoutes.js';
 
 
 dotenv.config();
@@ -18,7 +21,7 @@ mongoose.connect(process.env.MONGO_URI)
 .catch(err=>console.log("DB connection error :", err));
 
 app.use('/api/places',placeRoutes);
-app.use('/api/guides', guideRoutes);
+app.use('/api/guides',guideRoutes);
 
 //basic route
 app.get('/' , (req,res)=>{
