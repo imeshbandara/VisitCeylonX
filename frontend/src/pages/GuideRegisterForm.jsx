@@ -18,7 +18,7 @@ const GuideRegisterForm = () => {
       const langArray = formData.languages.split(',').map(l => l.trim());
       const dataToSend = { ...formData, languages: langArray };
 
-      await axios.post('http://localhost:5000/api/guides/register', dataToSend);
+      await axios.post('http://localhost:5002/api/guides/register', dataToSend);
       alert("Registration Successful!");
     } catch (err) {
       alert("Error: " + err.message);
