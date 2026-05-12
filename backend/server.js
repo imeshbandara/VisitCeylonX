@@ -40,3 +40,5 @@ app.listen(PORT , ()=>{
 //username = visitslone
 //password = passwordekamokakda
 //mongodb+srv://visitslone:passwordekamokakda@cluster0.pf9ql4o.mongodb.net/?appName=Cluster0
+
+// api key - AIzaSyDbtDLtDwzw8lLA_4ZZk0SH05NNECxVnlU
