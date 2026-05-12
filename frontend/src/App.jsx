@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import GuidePage from './pages/GuidePage';
 import RegisterSelect from './pages/RegisterSelect';
 import GuideRegisterForm from './pages/GuideRegisterForm';
+import TouristRegisterForm from './pages/TouristRegisterForm';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/guides" element={<GuidePage />} />
           <Route path="/register" element={<RegisterSelect />} />
           <Route path="/register/guide" element={<GuideRegisterForm />} />
+          <Route path="/register/tourist" element={<TouristRegisterForm />} />
         </Routes>
       </div>
     </Router>
