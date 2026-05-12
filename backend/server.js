@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 import placeRoutes from './routes/placeRoutes.js';
 import guideRoutes from './routes/guideRoutes.js';
+import touristRoutes from './routes/touristRoutes.js';
 
 
 dotenv.config();
@@ -15,6 +16,7 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // json daththa huwamaru krann use kranne
 
+
 //mongodb connect kirima
 mongoose.connect(process.env.MONGO_URI)
 .then(()=> console.log("VisitCeylonX Database Connected Successfully! ✅"))
@@ -22,6 +24,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use('/api/places',placeRoutes);
 app.use('/api/guides',guideRoutes);
+app.use('/api/tourists', touristRoutes);
 
 //basic route
 app.get('/' , (req,res)=>{
