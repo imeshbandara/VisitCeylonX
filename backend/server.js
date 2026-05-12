@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import placeRoutes from './routes/placeRoutes.js';
 import guideRoutes from './routes/guideRoutes.js';
 import touristRoutes from './routes/touristRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 
 
 dotenv.config();
@@ -25,6 +26,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/places',placeRoutes);
 app.use('/api/guides',guideRoutes);
 app.use('/api/tourists', touristRoutes);
+app.use('/api/ai', aiRoutes);
 
 //basic route
 app.get('/' , (req,res)=>{
