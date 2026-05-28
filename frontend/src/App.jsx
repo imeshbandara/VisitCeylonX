@@ -6,6 +6,7 @@ import GuidePage from './pages/GuidePage';
 import RegisterSelect from './pages/RegisterSelect';
 import GuideRegisterForm from './pages/GuideRegisterForm';
 import TouristRegisterForm from './pages/TouristRegisterForm';
+import AIPlanner from './pages/AIPlanner';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/register" element={<RegisterSelect />} />
           <Route path="/register/guide" element={<GuideRegisterForm />} />
           <Route path="/register/tourist" element={<TouristRegisterForm />} />
+          <Route path="/planner" element={<AIPlanner />} />
         </Routes>
       </div>
     </Router>
