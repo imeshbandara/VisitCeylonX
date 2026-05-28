@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import GuidePage from './pages/GuidePage';
@@ -9,7 +10,15 @@ import TouristRegisterForm from './pages/TouristRegisterForm';
 import AIPlanner from './pages/AIPlanner';
 
 function App() {
+
+  const initialOptions = {
+    "client-id": "ඔබේ_PAYPAL_CLIENT_ID_එක",
+    currency: "USD",
+    intent: "capture",
+  };
+  
   return (
+    <PayPalScriptProvider options={initialOptions}>
     <Router>
       <div className="min-h-screen font-poppins bg-background">
         <Navbar />
@@ -23,6 +32,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+    </PayPalScriptProvider>
   );
 }
 
