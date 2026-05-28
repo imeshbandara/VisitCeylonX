@@ -8,6 +8,7 @@ import placeRoutes from './routes/placeRoutes.js';
 import guideRoutes from './routes/guideRoutes.js';
 import touristRoutes from './routes/touristRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use('/api/places',placeRoutes);
 app.use('/api/guides',guideRoutes);
 app.use('/api/tourists', touristRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/payments', paymentRoutes);
 
 //basic route
 app.get('/' , (req,res)=>{
