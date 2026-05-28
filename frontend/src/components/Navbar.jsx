@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -29,13 +30,15 @@ const Navbar = () => {
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <Link to="/" className="hover:text-primary transition-colors">Explore</Link>
           <Link to="/guides" className="hover:text-primary transition-colors">Find Guide</Link>
+
+          <Link to="/planner" className="text-primary font-semibold hover:text-teal-700 transition-colors flex items-center gap-1">
+            ✨ AI Planner
+          </Link>
         
           <Link to="/register" className="bg-primary text-white px-6 py-2.5 rounded-xl hover:scale-105 transition-transform duration-200">
             Register
           </Link>
-          <button className="bg-primary text-white px-6 py-2.5 rounded-xl hover:scale-105 transition-transform duration-200">
-            AI Planner
-          </button>
+          
         </div>
       </div>
     </nav>
