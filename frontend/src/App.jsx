@@ -12,7 +12,7 @@ import AIPlanner from './pages/AIPlanner';
 function App() {
 
   const initialOptions = {
-    "client-id": "ඔබේ_PAYPAL_CLIENT_ID_එක",
+    "client-id": "AR5_8Q9k3Vd9Ex4l3Nl9n8TFjnoqD8M0NUShw1aeg0HcQ_vqMLXzs67S2CXI0FGadlpnnBH_zXaMvwb5",
     currency: "USD",
     intent: "capture",
   };
