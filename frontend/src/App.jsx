@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
@@ -18,6 +19,7 @@ function App() {
   };
   
   return (
+    <GoogleOAuthProvider clientId="783474425979-spp44uorg59kbpfl5tenakcln2ksclp2.apps.googleusercontent.com">
     <PayPalScriptProvider options={initialOptions}>
     <Router>
       <div className="min-h-screen font-poppins bg-background">
@@ -33,6 +35,7 @@ function App() {
       </div>
     </Router>
     </PayPalScriptProvider>
+    </GoogleOAuthProvider>
   );
 }
 
