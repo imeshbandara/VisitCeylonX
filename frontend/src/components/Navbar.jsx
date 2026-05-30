@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { MapPin, LogOut } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { MapPin, LogOut, ChevronDown } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // Used to evaluate exact active paths dynamically
   const [user, setUser] = useState(null);
 
-  
-  // page eka load weddi saha wenas weddi localStorage eke user innawada kiyala balima
+  // Monitors token changes securely across route interactions
   useEffect(() => {
     const loggedUser = localStorage.getItem("user");
     if (loggedUser) {
@@ -15,10 +15,8 @@ const Navbar = () => {
     } else {
       setUser(null);
     }
-  }, [window.location.pathname]); // Listen to route changes to update state immediately
+  }, [location.pathname]);
 
- 
-  //layout wimedi localStorage eka his kara home pge ekat yawima
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -27,63 +25,91 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <nav className="fixed w-full z-50 bg-white/80 backdrop-blur-md shadow-sm py-4">
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+    // Outer dynamic container with clean alignment layouts
+    <div className="fixed top-0 left-0 w-full z-50 px-6 pt-4 pointer-events-none">
+      <nav className="max-w-7xl mx-auto bg-white/95 backdrop-blur-md border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl h-16 px-6 flex justify-between items-center pointer-events-auto transition-all duration-300">
         
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-2xl text-primary">
-          <MapPin size={28} />
-          <span>VisitCeylonX</span>
+        {/* BRAND LOGO DESIGN */}
+        <Link to="/" className="flex items-center gap-2 group transition-transform active:scale-95">
+          <div className="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-sm shadow-blue-600/20">
+            <MapPin size={16} strokeWidth={2.5} />
+          </div>
+          <span className="font-bold text-base tracking-tight text-slate-800">
+            VisitCeylon<span className="text-blue-600">X</span>
+          </span>
         </Link>
 
-        {/* Navigation Links */}
-        <div className="hidden md:flex gap-8 items-center text-sm font-medium">
-          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-          <Link to="/guides" className="hover:text-primary transition-colors">Find Guide</Link>
-          <Link to="/planner" className="text-primary font-semibold hover:text-teal-700 transition-colors flex items-center gap-1">
-            ✨ AI Planner
+        {/* RECTILINEAR LINK CONFIGURATIONS */}
+        <div className="hidden md:flex items-center gap-8 text-xs font-semibold">
+          <Link 
+            to="/" 
+            className={`transition-colors duration-150 ${
+              isActive('/') ? 'text-slate-900 font-bold' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Home
           </Link>
-          
-          {/* Dynamic Render Logic (Conditional Rendering) */}
+          <Link 
+            to="/guides" 
+            className={`transition-colors duration-150 ${
+              isActive('/guides') ? 'text-slate-900 font-bold' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Find Guide
+          </Link>
+          <Link 
+            to="/planner" 
+            className={`transition-colors duration-150 ${
+              isActive('/planner') ? 'text-blue-600 font-bold' : 'text-slate-600 hover:text-blue-600'
+            }`}
+          >
+            AI Planner
+          </Link>
+        </div>
+
+        {/* AUTHENTICATED USER CONSOLE LOGIC */}
+        <div className="hidden md:flex items-center gap-4 text-xs">
           {user ? (
-            <div className="flex items-center gap-4 border-l pl-4 border-slate-200">
-              {/* User Profile Image & Name */}
+            <div className="flex items-center gap-3 bg-slate-50 border border-slate-200/60 pl-2 pr-3 py-1 rounded-xl">
               <div className="flex items-center gap-2">
                 <img 
                   src={user.picture} 
                   alt={user.fullName} 
-                  className="w-8 h-8 rounded-full border border-primary object-cover"
-                  referrerPolicy="no-referrer" // Prevent Google from blocking image load
+                  className="w-6 h-6 rounded-lg object-cover border border-slate-200"
+                  referrerPolicy="no-referrer"
                 />
-                <span className="text-slate-700 font-semibold max-w-[100px] truncate">
-                  {user.fullName.split(' ')[0]} {/* Show only first name */}
+                <span className="text-slate-700 font-semibold max-w-[80px] truncate">
+                  {user.fullName.split(' ')[0]}
                 </span>
               </div>
-
-              {/* Logout Button */}
               <button 
                 onClick={handleLogout}
-                className="text-slate-500 hover:text-red-600 transition-colors flex items-center gap-1 cursor-pointer"
-                title="Logout"
+                className="text-slate-400 hover:text-rose-600 transition-colors border-l pl-2 border-slate-200"
+                title="Sign Out"
               >
-                <LogOut size={18} />
+                <LogOut size={14} strokeWidth={2.5} />
               </button>
             </div>
           ) : (
-            /* If not logged in, show Register Button */
-            <div className="flex items-center gap-4">
-  <Link to="/login" className="text-slate-600 hover:text-primary transition-colors">
-    Sign In
-  </Link>
-  <Link to="/register" className="bg-primary text-white px-6 py-2.5 rounded-xl hover:scale-105 transition-transform duration-200">
-    Register
-  </Link>
-</div>
+            /* STRIPE-STYLE LOGIN REGISTER CTA SPLIT */
+            <div className="flex items-center gap-5">
+              <Link to="/login" className="font-semibold text-slate-600 hover:text-slate-900 transition-colors">
+                Sign in
+              </Link>
+              <Link 
+                to="/register" 
+                className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-xl hover:bg-blue-700 active:scale-95 shadow-sm shadow-blue-600/10 transition-all duration-150"
+              >
+                Get started
+              </Link>
+            </div>
           )}
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 };
 
