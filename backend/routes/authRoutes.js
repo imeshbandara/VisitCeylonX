@@ -16,9 +16,9 @@ router.post('/google-login', async (req, res) => {
         //2. naththan aluth tourist kenek widiht db ekata save krnw
         if (!tourist) {
             tourist = new Tourist({
-                name: name,
+                fullName: name,
                 email: email,
-                country: "Unknown (Google Auth)", // පසුව වෙනස් කරගත හැක
+                country: "Sri Lanka", // පසුව වෙනස් කරගත හැක
                 password: Math.random().toString(36).slice(-8), // Dummy password
             });
             await tourist.save();
@@ -36,16 +36,16 @@ router.post('/google-login', async (req, res) => {
             jwtToken,
             user: {
                 id: tourist._id,
-                name: tourist.name,
+                fullName: tourist.fullName,
                 email: tourist.email,
                 picture: picture
             }
         });
 
     } catch (error) {
-        console.error("Backend Auth Error:", error);
-        res.status(500).json({ message: "Internal Server Error during auth" });
-    }
+    console.error("EXACT BACKEND AUTH ERROR:", error); // Add this line
+    res.status(500).json({ message: "Internal Server Error during auth" });
+}
 });
 
 export default router;

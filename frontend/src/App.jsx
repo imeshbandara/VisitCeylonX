@@ -9,6 +9,7 @@ import RegisterSelect from './pages/RegisterSelect';
 import GuideRegisterForm from './pages/GuideRegisterForm';
 import TouristRegisterForm from './pages/TouristRegisterForm';
 import AIPlanner from './pages/AIPlanner';
+import Login from './pages/Login';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/register/guide" element={<GuideRegisterForm />} />
           <Route path="/register/tourist" element={<TouristRegisterForm />} />
           <Route path="/planner" element={<AIPlanner />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </Router>
