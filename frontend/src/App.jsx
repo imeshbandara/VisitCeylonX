@@ -10,6 +10,7 @@ import GuideRegisterForm from './pages/GuideRegisterForm';
 import TouristRegisterForm from './pages/TouristRegisterForm';
 import AIPlanner from './pages/AIPlanner';
 import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 
@@ -31,11 +32,18 @@ function App() {
           <Route path="/register" element={<RegisterSelect />} />
           <Route path="/register/guide" element={<GuideRegisterForm />} />
           <Route path="/register/tourist" element={<TouristRegisterForm />} />
-          <Route path="/planner" element={<AIPlanner />} />
           <Route path="/login" element={<Login />} />
-        </Routes>
-      </div>
-    </Router>
+          <Route 
+              path="/planner" 
+              element={
+                <ProtectedRoute>
+                  <AIPlanner />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+          </div>
+         </Router>
     </PayPalScriptProvider>
     </GoogleOAuthProvider>
   );
