@@ -72,9 +72,14 @@ const Navbar = () => {
             </div>
           ) : (
             /* If not logged in, show Register Button */
-            <Link to="/register" className="bg-primary text-white px-6 py-2.5 rounded-xl hover:scale-105 transition-transform duration-200">
-              Register
-            </Link>
+            <div className="flex items-center gap-4">
+  <Link to="/login" className="text-slate-600 hover:text-primary transition-colors">
+    Sign In
+  </Link>
+  <Link to="/register" className="bg-primary text-white px-6 py-2.5 rounded-xl hover:scale-105 transition-transform duration-200">
+    Register
+  </Link>
+</div>
           )}
         </div>
       </div>
