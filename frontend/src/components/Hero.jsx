@@ -1,61 +1,60 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Search } from 'lucide-react';
 
 const Hero = () => {
+  
   return (
-    <div className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1546708973-b339540b5162?q=80&w=2000")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      >
-        <div className="absolute inset-0 bg-black/30" /> {/* Dark overlay for readability */}
-      </div>
+    <div className="relative h-[85vh] w-full flex items-center justify-center overflow-hidden bg-slate-950">
+      
+      {/* BACKGROUND VIDEO ELEMENT */}
+      <video
+  autoPlay
+  loop
+  muted
+  playsInline
+  className="absolute inset-0 w-full h-full object-cover brightness-[0.45] scale-[1.01]"
+>
+  <source src="/Public/videos/bg-loop.mp4" type="video/mp4" /> 
+   
+      </video>
 
-      {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-4xl">
-        <motion.h1 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
-        >
-          Experience the Magic of <span className="text-secondary">Ceylon</span>
-        </motion.h1>
+      {/* CORE TEXT CONTENT CONTENT OVERLAY */}
+      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
+        
+        {/* Mini Status Tag */}
+        <div className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md border border-white/10 text-white font-medium text-[11px] uppercase tracking-wider px-3 py-1.5 rounded-full mb-6">
+          <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" />
+          Next-Gen Ceylon Exploration
+        </div>
 
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="text-lg md:text-xl text-white/90 mb-10 font-light"
-        >
-          Discover hidden gems, plan smart itineraries, and find expert guides for your journey.
-        </motion.p>
+        {/* Master Heading */}
+        <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
+          Explore Sri Lanka Guided by <span className="text-blue-400 font-black">Intelligence</span>
+        </h1>
+        
+        <p className="text-sm md:text-base text-slate-200 mt-4 max-w-xl font-medium tracking-normal leading-relaxed">
+          Unlock tailored travel structures mapped by generative AI systems and book government-vetted local experts seamlessly.
+        </p>
 
-        {/* Search Bar / Action */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
-          className="flex flex-col md:flex-row gap-4 justify-center items-center bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/20"
-        >
-          <div className="flex items-center gap-3 px-4 py-3 w-full md:w-80 bg-white rounded-xl text-textSecondary">
-            <Search size={20} className="text-primary" />
+        {/* HIGH CONTRAST SEARCH WRAPPER CARD */}
+        <div className="w-full max-w-lg bg-white p-2 rounded-2xl border border-slate-200/40 shadow-xl shadow-black/10 mt-10 flex items-center gap-2">
+          <div className="flex items-center gap-2 pl-3 flex-1 text-slate-400">
+            <Search size={16} strokeWidth={2.5} />
             <input 
               type="text" 
-              placeholder="Where do you want to go?" 
-              className="bg-transparent border-none outline-none w-full text-textPrimary"
+              placeholder="Where do you want to go? (e.g. Ella, Kandy...)" 
+              className="w-full bg-transparent text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none"
             />
           </div>
-          <button className="w-full md:w-auto bg-primary text-white px-8 py-3.5 rounded-xl font-medium hover:bg-teal-700 transition-all shadow-lg">
-            Start Exploring
-          </button>
-        </motion.div>
+          <Link 
+            to="/planner" 
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition-all duration-150 active:scale-95 flex items-center gap-1.5 shadow-sm shadow-blue-600/10 shrink-0"
+          >
+            Start Exploring <ArrowRight size={14} strokeWidth={2.5} />
+          </Link>
+        </div>
+
       </div>
     </div>
   );
