@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import GuidePage from './pages/GuidePage';
 import RegisterSelect from './pages/RegisterSelect';
@@ -11,6 +12,7 @@ import TouristRegisterForm from './pages/TouristRegisterForm';
 import AIPlanner from './pages/AIPlanner';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
+
 
 function App() {
 
@@ -42,6 +44,7 @@ function App() {
               } 
             />
           </Routes>
+          <Footer />
           </div>
          </Router>
     </PayPalScriptProvider>
