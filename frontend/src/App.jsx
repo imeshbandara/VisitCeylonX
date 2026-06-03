@@ -5,6 +5,7 @@ import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import PlaceDetails from './pages/PlaceDetails';
 import GuidePage from './pages/GuidePage';
 import RegisterSelect from './pages/RegisterSelect';
 import GuideRegisterForm from './pages/GuideRegisterForm';
@@ -30,6 +31,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/place/:id" element={<PlaceDetails />} />
           <Route path="/guides" element={<GuidePage />} />
           <Route path="/register" element={<RegisterSelect />} />
           <Route path="/register/guide" element={<GuideRegisterForm />} />
