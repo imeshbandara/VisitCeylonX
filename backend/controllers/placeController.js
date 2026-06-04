@@ -4,7 +4,7 @@ import Place from '../models/Place.js';
 // GET single place data from database
 export const getPlaceById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const placeId = req.params.id.trim();
 
     // Check if the ID provided is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
