@@ -1,16 +1,36 @@
 import mongoose from 'mongoose';
 
 const placeSchema = new mongoose.Schema({
-    name: { type: String , required: true},
-    description:{ type:String , required:true},
-    district:{ type:String , required:true},
-    category:{ type:String , required:true},
-    imageUrl:{type:String},
-    estimatedCosts:{
-        transport:{type: Number},
-        entranceFees:{type: Number},
-        food:{type: Number}
-    }
-},{ timestamp: true});
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  category: { type: String, required: true },
+  
+  // Accepting both 'location' and 'district'
+  location: { type: String },
+  district: { type: String },
+  
+  // Accepting both 'image' and 'imageUrl'
+  image: { type: String },
+  imageUrl: { type: String },
+  
+  // Accepting both 'cost' and 'estimatedCosts'
+  cost: { type: Number },
+  estimatedCosts: { type: Number }
+}, { timestamps: true });
 
-export default mongoose.model('Place',placeSchema);
+// Pre-save middleware to automatically sync missing keys before saving to Mongo
+placeSchema.pre('save', function(next) {
+  if (!this.location && this.district) this.location = this.district;
+  if (!this.district && this.location) this.district = this.location;
+  
+  if (!this.image && this.imageUrl) this.image = this.imageUrl;
+  if (!this.imageUrl && this.image) this.imageUrl = this.image;
+  
+  if (!this.cost && this.estimatedCosts) this.cost = this.estimatedCosts;
+  if (!this.estimatedCosts && this.cost) this.estimatedCosts = this.cost;
+  
+  next();
+});
+
+const Place = mongoose.model('Place', placeSchema);
+export default Place;
