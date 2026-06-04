@@ -14,14 +14,22 @@ const PlaceDetails = () => {
       try {
         setLoading(true);
         setError(false);
-        const { data } = await fetchPlaceById(id);
-        if (data) {
-          setPlace(data);
+        
+        // Fetch data from the backend API directly
+        const response = await fetchPlaceById(id);
+        
+        // Dynamic Extraction check: Express might send data directly, or wrapped in response.data
+        // We look for nested values inside response.data.data (from our new post structure) or response.data
+        const actualData = response.data?.data || response.data || response;
+        
+        if (actualData && (actualData._id || actualData.name)) {
+          setPlace(actualData);
         } else {
+          console.error("Backend sent an empty object configuration:", response);
           setError(true);
         }
       } catch (err) {
-        console.error("Error fetching destination details:", err);
+        console.error("Axios database connectivity handshake dropped:", err);
         setError(true);
       } finally {
         setLoading(false);
