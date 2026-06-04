@@ -1,42 +1,62 @@
 import express from 'express';
-import Place from '../models/Place.js'; // Import the model we created earlier
+import Place from '../models/Place.js'; // Import the model safely
 
 const router = express.Router();
 
-/* me kotasin kranne database eke siyaluma sthana pilibada 
-thorathuru labagena frontend ekata ewimata ready kirima */
-router.get('/',async(req,res)=>
-{
-    try{
-        const places = await Place.find();
-        res.status(200).json(places);
-    } catch(error){
-        res.status(500).json({ message : error.message});
-    }
+/* 1. DATABASE EKE SIYALUMA STHANA LABAGENA 
+      FRONTEND EKATA EWIMA (GET ALL) */
+router.get('/', async (req, res) => {
+  try {
+    const places = await Place.find();
+    res.status(200).json(places);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-/* user kenek aluth place ekaka wisthara athulath 
-karama eka database eke thanpath krnne meken*/
+/* 2. CLICK KARAPU CARD EKE ID EKATA ADALA VISTHARA 
+      VITHARAK LABAGENA FRONTEND EKATA EWIMA (GET BY ID) */
+router.get('/:id', async (req, res) => {
+  try {
+    // URL parameter එකෙන් එන ID එක පිරිසිදු කර ගැනීම (.trim())
+    const placeId = req.params.id.trim();
 
-router.post('/',async (req,res)=>
-{
-    const{ name,description, district, category, imageUrl, estimatedCosts} = req.body;
+    const place = await Place.findById(placeId);
 
-    const newPlace = new Place({
-        name,
-        description,
-        district,
-        category,
-        imageUrl,
-        estimatedCosts
-    });
-
-    try{
-        const savedPlace = await newPlace.save();
-        res.status(201).json(savedPlace);
-    } catch (error) {
-        res.status(400).json({message : error.message});
+    if (!place) {
+      return res.status(404).json({ message: "Destination details not found in MongoDB database" });
     }
+
+    res.status(200).json(place);
+  } catch (error) {
+    res.status(500).json({ message: "Server Database error", error: error.message });
+  }
+});
+
+/* 3. POSTMAN HARAHAA HO USER KENEK ALUTH PLACE EKAK 
+      ATHULATH KARAMA EKA DATABASE EKE THANPATH KIRIMA (POST) */
+router.post('/', async (req, res) => {
+  
+  const { name, description, location, district, category, image, imageUrl, cost, estimatedCosts } = req.body;
+
+  const newPlace = new Place({
+    name,
+    description,
+    
+    location: location || district, 
+    category,
+    
+    image: image || imageUrl,
+    
+    cost: cost || estimatedCosts
+  });
+
+  try {
+    const savedPlace = await newPlace.save();
+    res.status(201).json({ message: "Destination added successfully! 🎉", data: savedPlace });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 export default router;
