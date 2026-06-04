@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchPlaceById } from '../api';
-import { MapPin, ArrowLeft, DollarSign, Bookmark, Compass } from 'lucide-react';
+import { MapPin, ArrowLeft, Shield, Compass, Clock, Wallet, Info } from 'lucide-react';
 
 const PlaceDetails = () => {
-  const { id } = useParams(); //url eken id kiyana eka kiyawa genima
+  const { id } = useParams();
   const [place, setPlace] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const getPlaceData = async () => {
       try {
+        setLoading(true);
+        setError(false);
         const { data } = await fetchPlaceById(id);
-        setPlace(data);
-      } catch (error) {
-        console.error("Error fetching destination details:", error);
+        if (data) {
+          setPlace(data);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error("Error fetching destination details:", err);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -24,109 +32,134 @@ const PlaceDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-[80vh] flex flex-col items-center justify-center bg-slate-50/30">
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs font-semibold text-slate-500 mt-4 tracking-wide animate-pulse">Syncing with database...</p>
       </div>
     );
   }
 
-  if (!place) {
+  if (error || !place) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center text-slate-500 text-xs font-semibold gap-3">
-        <p>Destination details could not be found.</p>
-        <Link to="/" className="text-blue-600 hover:underline">Return Home</Link>
+      <div className="min-h-[80vh] flex flex-col items-center justify-center bg-slate-50/30 px-6">
+        <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl max-w-sm text-center space-y-3">
+          <Info className="text-rose-500 mx-auto" size={24} />
+          <h3 className="font-bold text-slate-800 text-sm">Data Synced, Record Missing</h3>
+          <p className="text-xs font-medium text-slate-500 leading-relaxed">
+            React successfully routed here, but this specific ID does not exist in your MongoDB collection yet. Try re-inserting via Postman.
+          </p>
+          <Link to="/" className="inline-block bg-slate-900 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all active:scale-95">
+            Return to Explorations
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-slate-50/40 pb-24 font-sans">
-      <div className="max-w-6xl mx-auto px-6 pt-8">
+      
+      {/* GLOSSY COVER IMAGE BANNER SURFACES */}
+      <div className="relative h-[45vh] w-full bg-slate-900">
+        <img 
+          src={place.image} 
+          alt={place.name} 
+          className="w-full h-full object-cover opacity-75 brightness-[0.85]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
         
-        {/* BACK NAVIGATION ACTION */}
-        <Link to="/" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors mb-8 group">
-          <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
-          Back to Explorations
-        </Link>
+        {/* Floating Back Action over Banner */}
+        <div className="absolute top-8 left-8 z-10">
+          <Link to="/" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 text-white font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-white/20 transition-all group">
+            <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
+            Back to Destinations
+          </Link>
+        </div>
 
-        {/* TWO-COLUMN PREMIUM CONTENT GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          {/* LEFT AREA: HIGH RES MEDIA GALLERIES */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="relative h-[450px] w-full rounded-2xl overflow-hidden border border-slate-100 shadow-sm bg-slate-100">
-              <img 
-                src={place.image} 
-                alt={place.name} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            {/* Multi-photo grid loop setup (If backend contains extra gallery loops, otherwise shows clean preview placeholders) */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="h-24 bg-slate-100 border border-slate-200/60 rounded-xl overflow-hidden cursor-pointer opacity-90 hover:opacity-100 transition-opacity">
-                <img src={place.image} alt="View 1" className="w-full h-full object-cover brightness-95" />
-              </div>
-              <div className="h-24 bg-slate-100 border border-slate-200/60 rounded-xl flex items-center justify-center text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-                Landscape view
-              </div>
-              <div className="h-24 bg-slate-100 border border-slate-200/60 rounded-xl flex items-center justify-center text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-                Cultural context
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT AREA: STRUCTURAL NARRATIVES */}
-          <div className="lg:col-span-5 bg-white border border-slate-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-6">
-            
-            <div>
-              <span className="bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-md">
-                {place.category || 'Verified Vibe'}
+        {/* Text Details Positioned over Cover Bottom */}
+        <div className="absolute bottom-8 left-0 w-full px-8">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-1 bg-blue-600/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md">
+                <Shield size={10} className="fill-white/20" /> {place.category || 'Vetted Destination'}
               </span>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight mt-3">
+              <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">
                 {place.name}
               </h1>
-              <div className="flex items-center gap-1 text-xs font-semibold text-slate-500 mt-2">
-                <MapPin size={14} className="text-blue-600" />
+              <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-200">
+                <MapPin size={14} className="text-blue-400" />
                 <span>{place.location}, Sri Lanka</span>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <hr className="border-slate-100" />
+      {/* CORE INFO GRID CONTENT */}
+      <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12 items-start">
+        
+        {/* LEFT COLUMN: PRIMARY RICH EXPLANATION */}
+        <div className="lg:col-span-7 bg-white border border-slate-100 rounded-2xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-6">
+          <div>
+            <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Detailed Explanation</h2>
+            <p className="text-slate-800 text-sm font-semibold mt-1 tracking-tight">Comprehensive Destination Briefing</p>
+          </div>
+          
+          <p className="text-xs font-medium text-slate-600 leading-relaxed tracking-normal whitespace-pre-line">
+            {place.description}
+          </p>
 
-            {/* DESCRIPTION PORTION */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Overview</h3>
-              <p className="text-xs font-medium text-slate-600 leading-relaxed tracking-normal">
-                {place.description}
-              </p>
+          {/* Clean Local Grid Gallery */}
+          <div className="grid grid-cols-2 gap-4 pt-4">
+            <div className="h-36 bg-slate-50 border border-slate-100 rounded-xl overflow-hidden relative group">
+              <img src={place.image} alt="Detail View 1" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="h-36 bg-slate-50 border border-slate-100 rounded-xl flex flex-col items-center justify-center p-4 text-center text-slate-400">
+              <Compass size={20} className="text-slate-300 mb-1" />
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Verified Location</p>
+              <p className="text-[9px] font-medium text-slate-400 mt-0.5">SLTDA Vetted Site</p>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: QUICK FACT CARDS & METRICS */}
+        <div className="lg:col-span-5 space-y-6">
+          <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-5">
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Quick Metrics</h3>
+            
+            <div className="space-y-3">
+              {/* Cost Item */}
+              <div className="flex items-center gap-3 bg-slate-50/60 border border-slate-100/80 p-3 rounded-xl">
+                <div className="w-8 h-8 bg-blue-50 border border-blue-100 text-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                  <Wallet size={14} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estimated Budget</p>
+                  <p className="font-extrabold text-slate-800 text-xs mt-0.5">LKR {place.cost} upwards</p>
+                </div>
+              </div>
+
+              {/* Timing Item */}
+              <div className="flex items-center gap-3 bg-slate-50/60 border border-slate-100/80 p-3 rounded-xl">
+                <div className="w-8 h-8 bg-amber-50 border border-amber-100 text-amber-600 rounded-lg flex items-center justify-center shrink-0">
+                  <Clock size={14} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Recommended Visit Time</p>
+                  <p className="font-extrabold text-slate-800 text-xs mt-0.5">Early Morning (6:00 AM - 9:00 AM)</p>
+                </div>
+              </div>
             </div>
 
-            <hr className="border-slate-100" />
-
-            {/* METRICS SPECIFICATION GRID */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-slate-50/70 border border-slate-100 p-3.5 rounded-xl">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Budget Estimate</p>
-                <p className="font-bold text-slate-800 text-sm mt-0.5">LKR {place.cost}</p>
-              </div>
-              <div className="bg-slate-50/70 border border-slate-100 p-3.5 rounded-xl">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Access Status</p>
-                <p className="font-bold text-emerald-600 text-sm mt-0.5">Open Public</p>
-              </div>
-            </div>
-
-            {/* CALL TO ACTION HUB */}
+            {/* ACTION CONTAINER INTERFACE BUTTONS */}
             <Link 
               to="/planner" 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3.5 rounded-xl transition-all duration-150 active:scale-95 flex items-center justify-center gap-2 shadow-sm shadow-blue-600/10 mt-4"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3.5 rounded-xl transition-all duration-150 active:scale-95 flex items-center justify-center gap-2 shadow-sm shadow-blue-600/10 mt-2"
             >
-              <Compass size={15} />
-              Generate AI Itinerary for this Place
+              <Compass size={14} strokeWidth={2.5} />
+              Build AI Itinerary with this Destination
             </Link>
-
           </div>
-
         </div>
 
       </div>
