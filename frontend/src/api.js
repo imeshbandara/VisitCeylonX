@@ -8,3 +8,4 @@ export const fetchPlaceById = (id) => API.get(`/places/${id}`);
 export const fetchGuides = () => API.get('/guides');
 
 export default API;
+
