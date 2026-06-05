@@ -1,10 +1,9 @@
 import express from 'express';
-import Place from '../models/Place.js'; // Import the model safely
+import Place from '../models/Place.js';
 
 const router = express.Router();
 
-/* 1. DATABASE EKE SIYALUMA STHANA LABAGENA 
-      FRONTEND EKATA EWIMA (GET ALL) */
+// 1. GET ALL PLACES
 router.get('/', async (req, res) => {
   try {
     const places = await Place.find();
@@ -14,69 +13,47 @@ router.get('/', async (req, res) => {
   }
 });
 
-/* 2. CLICK KARAPU CARD EKE ID EKATA ADALA VISTHARA 
-      VITHARAK LABAGENA FRONTEND EKATA EWIMA (GET BY ID) */
+// 2. GET SINGLE PLACE BY ID
 router.get('/:id', async (req, res) => {
   try {
-    // URL parameter එකෙන් එන ID එක පිරිසිදු කර ගැනීම (.trim())
     const placeId = req.params.id.trim();
-
     const place = await Place.findById(placeId);
-
-    if (!place) {
-      return res.status(404).json({ message: "Destination details not found in MongoDB database" });
-    }
-
+    if (!place) return res.status(404).json({ message: "Not found" });
     res.status(200).json(place);
   } catch (error) {
-    res.status(500).json({ message: "Server Database error", error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
-/* 3. POSTMAN HARAHAA HO USER KENEK ALUTH PLACE EKAK 
-      ATHULATH KARAMA EKA DATABASE EKE THANPATH KIRIMA (POST) */
+// 3. POST NEW PLACE
 router.post('/', async (req, res) => {
-  
-  const { name, description, location, district, category, image, imageUrl, cost, estimatedCosts } = req.body;
-
-  const newPlace = new Place({
-    name,
-    description,
-    
-    location: location || district, 
-    category,
-    
-    image: image || imageUrl,
-    
-    cost: cost || estimatedCosts
-  });
-
   try {
+    const newPlace = new Place(req.body);
     const savedPlace = await newPlace.save();
-    res.status(201).json({ message: "Destination added successfully! 🎉", data: savedPlace });
+    res.status(201).json(savedPlace);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
 
+// 4. update a place
 router.put('/:id', async (req, res) => {
   try {
     const placeId = req.params.id.trim();
-
-    // req.body එකෙන් එන අලුත් දත්ත ටික අරගෙන database එකේ තියෙන record එක update කිරීම
+    
     const updatedPlace = await Place.findByIdAndUpdate(
       placeId,
-      { $set: req.body }, // Body එකෙන් එවන ඕනෑම field එකක් dynamic ලෙස update වේ
-      { new: true, runValidators: true } // true කිරීමෙන් update වූ පසු අලුත් දත්තම ආපසු ලබාදේ
+      { $set: req.body },
+      { new: true, runValidators: true }
     );
 
     if (!updatedPlace) {
-      return res.status(404).json({ message: "Destination not found to update" });
+      return res.status(404).json({ message: "Destination ID not found in database" });
     }
 
     res.status(200).json({ message: "Destination updated successfully! 🚀", data: updatedPlace });
   } catch (error) {
-    res.status(400).json({ message: "Update failed", error: error.message });
+    res.status(400).json({ message: "Update crashed", error: error.message });
   }
 });
 
