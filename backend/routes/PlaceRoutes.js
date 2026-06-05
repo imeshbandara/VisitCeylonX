@@ -59,4 +59,25 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  try {
+    const placeId = req.params.id.trim();
+
+    // req.body එකෙන් එන අලුත් දත්ත ටික අරගෙන database එකේ තියෙන record එක update කිරීම
+    const updatedPlace = await Place.findByIdAndUpdate(
+      placeId,
+      { $set: req.body }, // Body එකෙන් එවන ඕනෑම field එකක් dynamic ලෙස update වේ
+      { new: true, runValidators: true } // true කිරීමෙන් update වූ පසු අලුත් දත්තම ආපසු ලබාදේ
+    );
+
+    if (!updatedPlace) {
+      return res.status(404).json({ message: "Destination not found to update" });
+    }
+
+    res.status(200).json({ message: "Destination updated successfully! 🚀", data: updatedPlace });
+  } catch (error) {
+    res.status(400).json({ message: "Update failed", error: error.message });
+  }
+});
+
 export default router;
