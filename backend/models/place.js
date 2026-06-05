@@ -16,10 +16,11 @@ const placeSchema = new mongoose.Schema({
   // Accepting both 'cost' and 'estimatedCosts'
   cost: { type: Number },
   estimatedCosts: { type: Number },
+  
   mapEmbedUrl: { type: String }
 }, { timestamps: true });
 
-// Pre-save middleware to automatically sync missing keys before saving to Mongo
+// 1. FOR POST REQUESTS: Automatically sync fields before saving a new document
 placeSchema.pre('save', async function() {
   if (!this.location && this.district) this.location = this.district;
   if (!this.district && this.location) this.district = this.location;
@@ -29,8 +30,23 @@ placeSchema.pre('save', async function() {
   
   if (!this.cost && this.estimatedCosts) this.cost = this.estimatedCosts;
   if (!this.estimatedCosts && this.cost) this.estimatedCosts = this.cost;
+});
+
+// 2. FOR PUT REQUESTS: Automatically sync fields when findByIdAndUpdate/findOneAndUpdate is triggered
+placeSchema.pre('findOneAndUpdate', async function() {
+  const update = this.getUpdate();
   
-  // No next() call needed here in an async pre-save wrapper!
+  
+  const data = update.$set || update;
+
+  if (data.district && !data.location) data.location = data.district;
+  if (data.location && !data.district) data.district = data.location;
+
+  if (data.imageUrl && !data.image) data.image = data.imageUrl;
+  if (data.image && !data.imageUrl) data.imageUrl = data.image;
+
+  if (data.estimatedCosts && !data.cost) data.cost = data.estimatedCosts;
+  if (data.cost && !data.estimatedCosts) data.estimatedCosts = data.cost;
 });
 
 const Place = mongoose.model('Place', placeSchema);
