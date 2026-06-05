@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import PlaceCard from '../components/PlaceCard';
 import { fetchPlaces } from '../api';
+import { ArrowRight, Compass } from 'lucide-react';
 
 const HomePage = () => {
   const [places, setPlaces] = useState([]);
@@ -39,6 +41,7 @@ const HomePage = () => {
             Explore the most beautiful places in Sri Lanka.
           </p>
         </div>
+        
 
         {loading ? (
           /* Premium clean skeleton pulse placeholder */
@@ -52,12 +55,26 @@ const HomePage = () => {
             ))}
           </div>
         ) : (
-          /* Structured Grid Layout */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {places.map((place) => (
-              <PlaceCard key={place._id} place={place} />
-            ))}
-          </div>
+          /* Wrap details and button into a clean structural fragment */
+          <>
+            {/* STRUCTURED GRID LAYOUT - LIMITED TO ONLY 6 PLACES */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {places.slice(0, 6).map((place) => (
+                <PlaceCard key={place._id} place={place} />
+              ))}
+            </div>
+
+            {/* RIGHT SIDE CORNER AT THE BOTTOM: SEE ALL BUTTON */}
+            <div className="flex justify-end mt-12">
+              <Link 
+                to="/all-places" 
+                className="inline-flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold px-5 py-3 rounded-xl transition-all duration-200 shadow-sm active:scale-95 group"
+              >
+                See All Places
+                <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </div>
+          </>
         )}
       </section>
     </div>
