@@ -13,6 +13,7 @@ import TouristRegisterForm from './pages/TouristRegisterForm';
 import AIPlanner from './pages/AIPlanner';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
+import AllPlaces from './pages/AllPlaces';
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           <Route path="/register/guide" element={<GuideRegisterForm />} />
           <Route path="/register/tourist" element={<TouristRegisterForm />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/all-places" element={<AllPlaces />} />
           <Route 
               path="/planner" 
               element={
