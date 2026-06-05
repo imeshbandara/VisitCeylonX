@@ -15,7 +15,8 @@ const placeSchema = new mongoose.Schema({
   
   // Accepting both 'cost' and 'estimatedCosts'
   cost: { type: Number },
-  estimatedCosts: { type: Number }
+  estimatedCosts: { type: Number },
+  mapEmbedUrl: { type: String }
 }, { timestamps: true });
 
 // Pre-save middleware to automatically sync missing keys before saving to Mongo
