@@ -15,8 +15,6 @@ const PlaceDetails = () => {
         setLoading(true);
         setError(false);
         const response = await fetchPlaceById(id);
-        
-        // Extracting data safely from nested structures if wrapped
         const actualData = response?.data?.data || response?.data || response;
         
         if (actualData && (actualData._id || actualData.name)) {
@@ -25,7 +23,7 @@ const PlaceDetails = () => {
           setError(true);
         }
       } catch (err) {
-        console.error("Database link handshake dropped:", err);
+        console.error("Database connection dropped:", err);
         setError(true);
       } finally {
         setLoading(false);
@@ -50,7 +48,7 @@ const PlaceDetails = () => {
           <Info className="text-rose-500 mx-auto" size={24} />
           <h3 className="font-bold text-slate-800 text-sm">Data Synced, Format Mismatch</h3>
           <p className="text-xs font-medium text-slate-500 leading-relaxed">
-            The data for ID <span className="font-mono text-[10px] bg-white p-1 rounded border">{id}</span> was loaded, but keys are incompatible. Ensure your Postman body matches the Schema exactly.
+            The data for ID <span className="font-mono text-[10px] bg-white p-1 rounded border">{id}</span> was loaded, but keys are incompatible.
           </p>
           <Link to="/" className="inline-block bg-slate-900 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all active:scale-95">
             Return to Explorations
@@ -60,21 +58,19 @@ const PlaceDetails = () => {
     );
   }
 
-  // DYNAMIC FALLBACK VARIABLES (Handles field name mismatches automatically)
   const renderImage = place.image || place.imageUrl || "https://images.unsplash.com/photo-1588598126265-fba9397623fd?q=80&w=1000";
   const renderLocation = place.location || place.district || "Sri Lanka";
   const renderCost = place.cost || place.estimatedCosts || "Variable";
+  
+  // 🗺️ Default Fallback Map (Nine Arches Bridge Embed URL) if no link exists in DB
+  const renderMap = place.mapEmbedUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.4241724590325!2d81.05834887584102!3d6.839665519401764!2m3!1f0!2f0!3f0!3m2!1i1024!2i1024!3m4!1s0x3ae4659f80029b95%3A0xc4eb7ea39912061!8m2!3d6.8396602!4d81.0609238!5m2!1sen!2slk";
 
   return (
     <div className="min-h-screen bg-slate-50/40 pb-24 font-sans">
       
       {/* COVER IMAGE BANNER */}
       <div className="relative h-[45vh] w-full bg-slate-900">
-        <img 
-          src={renderImage} 
-          alt={place.name} 
-          className="w-full h-full object-cover opacity-75 brightness-[0.85]"
-        />
+        <img src={renderImage} alt={place.name} className="w-full h-full object-cover opacity-75 brightness-[0.85]" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
         
         <div className="absolute top-8 left-8 z-10">
@@ -102,10 +98,10 @@ const PlaceDetails = () => {
         </div>
       </div>
 
-      {/* INFO BLOCK PANEL */}
+      {/* CORE CONTENT LAYOUT */}
       <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12 items-start">
         
-        {/* LEFT COMPARTMENT */}
+        {/* LEFT EXPLANATION COLUMN */}
         <div className="lg:col-span-7 bg-white border border-slate-100 rounded-2xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-6">
           <div>
             <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Detailed Explanation</h2>
@@ -116,19 +112,28 @@ const PlaceDetails = () => {
             {place.description}
           </p>
 
-          <div className="grid grid-cols-2 gap-4 pt-4">
-            <div className="h-36 bg-slate-50 border border-slate-100 rounded-xl overflow-hidden">
-              <img src={renderImage} alt="Detail" className="w-full h-full object-cover" />
+          {/* TWO COLUMN ASSETS AREA - IMAGE + LIVE MAP */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+            {/* Gallery Image */}
+            <div className="h-44 bg-slate-50 border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+              <img src={renderImage} alt="Detail view" className="w-full h-full object-cover" />
             </div>
-            <div className="h-36 bg-slate-50 border border-slate-100 rounded-xl flex flex-col items-center justify-center p-4 text-center text-slate-400">
-              <Compass size={20} className="text-slate-300 mb-1" />
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Verified Location</p>
-              <p className="text-[9px] font-medium text-slate-400 mt-0.5">SLTDA Vetted Site</p>
+            
+            {/* 🗺️ DYNAMIC LIVE GOOGLE MAP WEBVIEW */}
+            <div className="h-44 bg-slate-50 border border-slate-100 rounded-xl overflow-hidden shadow-sm relative">
+              <iframe
+                title="Google Maps Location Verified"
+                src={renderMap}
+                className="w-full h-full border-0"
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
         </div>
 
-        {/* RIGHT COMPARTMENT */}
+        {/* RIGHT QUICK METRICS COLUMN */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-5">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Quick Metrics</h3>
