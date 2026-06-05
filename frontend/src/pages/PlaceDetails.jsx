@@ -14,22 +14,18 @@ const PlaceDetails = () => {
       try {
         setLoading(true);
         setError(false);
-        
-        // Fetch data from the backend API directly
         const response = await fetchPlaceById(id);
         
-        // Dynamic Extraction check: Express might send data directly, or wrapped in response.data
-        // We look for nested values inside response.data.data (from our new post structure) or response.data
-        const actualData = response.data?.data || response.data || response;
+        // Extracting data safely from nested structures if wrapped
+        const actualData = response?.data?.data || response?.data || response;
         
         if (actualData && (actualData._id || actualData.name)) {
           setPlace(actualData);
         } else {
-          console.error("Backend sent an empty object configuration:", response);
           setError(true);
         }
       } catch (err) {
-        console.error("Axios database connectivity handshake dropped:", err);
+        console.error("Database link handshake dropped:", err);
         setError(true);
       } finally {
         setLoading(false);
@@ -50,13 +46,13 @@ const PlaceDetails = () => {
   if (error || !place) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center bg-slate-50/30 px-6">
-        <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl max-w-sm text-center space-y-3">
+        <div className="p-6 bg-rose-50 border border-rose-100 rounded-2xl max-w-sm text-center space-y-3">
           <Info className="text-rose-500 mx-auto" size={24} />
-          <h3 className="font-bold text-slate-800 text-sm">Data Synced, Record Missing</h3>
+          <h3 className="font-bold text-slate-800 text-sm">Data Synced, Format Mismatch</h3>
           <p className="text-xs font-medium text-slate-500 leading-relaxed">
-            React successfully routed here, but this specific ID does not exist in your MongoDB collection yet. Try re-inserting via Postman.
+            The data for ID <span className="font-mono text-[10px] bg-white p-1 rounded border">{id}</span> was loaded, but keys are incompatible. Ensure your Postman body matches the Schema exactly.
           </p>
-          <Link to="/" className="inline-block bg-slate-900 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all active:scale-95">
+          <Link to="/" className="inline-block bg-slate-900 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all active:scale-95">
             Return to Explorations
           </Link>
         </div>
@@ -64,19 +60,23 @@ const PlaceDetails = () => {
     );
   }
 
+  // DYNAMIC FALLBACK VARIABLES (Handles field name mismatches automatically)
+  const renderImage = place.image || place.imageUrl || "https://images.unsplash.com/photo-1588598126265-fba9397623fd?q=80&w=1000";
+  const renderLocation = place.location || place.district || "Sri Lanka";
+  const renderCost = place.cost || place.estimatedCosts || "Variable";
+
   return (
     <div className="min-h-screen bg-slate-50/40 pb-24 font-sans">
       
-      {/* GLOSSY COVER IMAGE BANNER SURFACES */}
+      {/* COVER IMAGE BANNER */}
       <div className="relative h-[45vh] w-full bg-slate-900">
         <img 
-          src={place.image} 
+          src={renderImage} 
           alt={place.name} 
           className="w-full h-full object-cover opacity-75 brightness-[0.85]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
         
-        {/* Floating Back Action over Banner */}
         <div className="absolute top-8 left-8 z-10">
           <Link to="/" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 text-white font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-white/20 transition-all group">
             <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
@@ -84,29 +84,28 @@ const PlaceDetails = () => {
           </Link>
         </div>
 
-        {/* Text Details Positioned over Cover Bottom */}
         <div className="absolute bottom-8 left-0 w-full px-8">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
               <span className="inline-flex items-center gap-1 bg-blue-600/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md">
                 <Shield size={10} className="fill-white/20" /> {place.category || 'Vetted Destination'}
               </span>
-              <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mt-1">
                 {place.name}
               </h1>
-              <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-200">
+              <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-200 mt-1">
                 <MapPin size={14} className="text-blue-400" />
-                <span>{place.location}, Sri Lanka</span>
+                <span>{renderLocation}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* CORE INFO GRID CONTENT */}
+      {/* INFO BLOCK PANEL */}
       <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12 items-start">
         
-        {/* LEFT COLUMN: PRIMARY RICH EXPLANATION */}
+        {/* LEFT COMPARTMENT */}
         <div className="lg:col-span-7 bg-white border border-slate-100 rounded-2xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-6">
           <div>
             <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Detailed Explanation</h2>
@@ -117,10 +116,9 @@ const PlaceDetails = () => {
             {place.description}
           </p>
 
-          {/* Clean Local Grid Gallery */}
           <div className="grid grid-cols-2 gap-4 pt-4">
-            <div className="h-36 bg-slate-50 border border-slate-100 rounded-xl overflow-hidden relative group">
-              <img src={place.image} alt="Detail View 1" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div className="h-36 bg-slate-50 border border-slate-100 rounded-xl overflow-hidden">
+              <img src={renderImage} alt="Detail" className="w-full h-full object-cover" />
             </div>
             <div className="h-36 bg-slate-50 border border-slate-100 rounded-xl flex flex-col items-center justify-center p-4 text-center text-slate-400">
               <Compass size={20} className="text-slate-300 mb-1" />
@@ -130,36 +128,33 @@ const PlaceDetails = () => {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: QUICK FACT CARDS & METRICS */}
+        {/* RIGHT COMPARTMENT */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-5">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Quick Metrics</h3>
             
             <div className="space-y-3">
-              {/* Cost Item */}
               <div className="flex items-center gap-3 bg-slate-50/60 border border-slate-100/80 p-3 rounded-xl">
                 <div className="w-8 h-8 bg-blue-50 border border-blue-100 text-blue-600 rounded-lg flex items-center justify-center shrink-0">
                   <Wallet size={14} strokeWidth={2.5} />
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Estimated Budget</p>
-                  <p className="font-extrabold text-slate-800 text-xs mt-0.5">LKR {place.cost} upwards</p>
+                  <p className="font-extrabold text-slate-800 text-xs mt-0.5">LKR {renderCost} up</p>
                 </div>
               </div>
 
-              {/* Timing Item */}
               <div className="flex items-center gap-3 bg-slate-50/60 border border-slate-100/80 p-3 rounded-xl">
                 <div className="w-8 h-8 bg-amber-50 border border-amber-100 text-amber-600 rounded-lg flex items-center justify-center shrink-0">
                   <Clock size={14} strokeWidth={2.5} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Recommended Visit Time</p>
-                  <p className="font-extrabold text-slate-800 text-xs mt-0.5">Early Morning (6:00 AM - 9:00 AM)</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Visit Timing</p>
+                  <p className="font-extrabold text-slate-800 text-xs mt-0.5">Daytime Operations</p>
                 </div>
               </div>
             </div>
 
-            {/* ACTION CONTAINER INTERFACE BUTTONS */}
             <Link 
               to="/planner" 
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3.5 rounded-xl transition-all duration-150 active:scale-95 flex items-center justify-center gap-2 shadow-sm shadow-blue-600/10 mt-2"
