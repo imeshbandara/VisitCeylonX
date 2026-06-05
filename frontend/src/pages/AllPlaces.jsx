@@ -44,7 +44,7 @@ const AllPlaces = () => {
         <div className="mb-12">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
             <Globe className="text-blue-600" size={24} />
-            All Wandering Destinations
+            All Wandering Destinations of Sri Lanka 📸
           </h1>
           <p className="text-xs text-slate-500 font-medium mt-1">
             A complete roster of verified Sri Lankan gems logged into our ecosystem database.
