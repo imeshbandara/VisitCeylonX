@@ -19,7 +19,7 @@ const placeSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Pre-save middleware to automatically sync missing keys before saving to Mongo
-placeSchema.pre('save', function(next) {
+placeSchema.pre('save', async function() {
   if (!this.location && this.district) this.location = this.district;
   if (!this.district && this.location) this.district = this.location;
   
@@ -29,7 +29,7 @@ placeSchema.pre('save', function(next) {
   if (!this.cost && this.estimatedCosts) this.cost = this.estimatedCosts;
   if (!this.estimatedCosts && this.cost) this.estimatedCosts = this.cost;
   
-  next();
+  // No next() call needed here in an async pre-save wrapper!
 });
 
 const Place = mongoose.model('Place', placeSchema);
