@@ -17,6 +17,10 @@ const HomePage = () => {
       try {
         const { data } = await fetchPlaces();
         setPlaces(data);
+
+        const eventsRes = await fetchEvents(); // Fetch events from DB
+        setEvents(eventsRes.data);
+        
       } catch (error) {
         console.error("Error fetching places:", error);
       } finally {
