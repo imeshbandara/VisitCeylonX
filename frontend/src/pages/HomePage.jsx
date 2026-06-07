@@ -20,7 +20,7 @@ const HomePage = () => {
 
         const eventsRes = await fetchEvents(); // Fetch events from DB
         setEvents(eventsRes.data);
-        
+
       } catch (error) {
         console.error("Error fetching places:", error);
       } finally {
@@ -84,6 +84,43 @@ const HomePage = () => {
           </>
         )}
       </section>
+
+      {/* 🛠️ 2. NEW PREMIUM EVENTS & FESTIVALS SECTION */}
+      <section className="py-12 border-t border-slate-100 bg-white/40">
+        <div className="max-w-7xl mx-auto px-8">
+          
+          {/* Header */}
+          <div className="mb-10">
+            <span className="inline-flex items-center gap-1 text-blue-600 font-bold text-[10px] uppercase tracking-widest mb-1">
+              <Sparkles size={10} className="fill-blue-100" /> Cultural Heritage
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Events & Festivals
+            </h2>
+            <p className="text-xs text-slate-500 font-semibold mt-1">
+              Immerse yourself in rich island traditions and seasonal celebrations.
+            </p>
+          </div>
+
+          {/* PREMIUM HORIZONTAL SCROLL CONSOLE */}
+          {loading ? (
+            <div className="text-xs text-slate-400 font-semibold animate-pulse">Syncing events...</div>
+          ) : (
+            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 snap-x no-scrollbar scroll-smooth [mask-image:linear-gradient(to_right,black_85%,transparent)]">
+              {events.map((event) => (
+                <div key={event._id} className="snap-start">
+                  <EventCard event={event} />
+                </div>
+              ))}
+              {events.length === 0 && (
+                <div className="text-xs text-slate-400 font-semibold py-8">No current events listed in database.</div>
+              )}
+            </div>
+          )}
+
+        </div>
+      </section>
+
     </div>
   );
 };
