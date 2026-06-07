@@ -4,7 +4,7 @@ import Hero from '../components/Hero';
 import PlaceCard from '../components/PlaceCard';
 import { fetchPlaces, fetchEvents } from '../api';
 import { fetchPlaces } from '../api';
-import { ArrowRight, Compass } from 'lucide-react';
+import { ArrowRight, Compass, Sparkles } from 'lucide-react';
 
 const HomePage = () => {
   const [places, setPlaces] = useState([]);
