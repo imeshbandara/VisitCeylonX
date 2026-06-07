@@ -6,6 +6,8 @@ const API = axios.create({ baseURL: 'http://localhost:5002/api' });
 export const fetchPlaces = () => API.get('/places');
 export const fetchPlaceById = (id) => API.get(`/places/${id}`);
 export const fetchGuides = () => API.get('/guides');
+export const fetchEvents = () => API.get('/events');
+export const fetchEventById = (id) => API.get(`/events/${id}`);
 
 export default API;
 
