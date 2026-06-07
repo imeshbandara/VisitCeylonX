@@ -9,6 +9,7 @@ import { ArrowRight, Compass } from 'lucide-react';
 
 const HomePage = () => {
   const [places, setPlaces] = useState([]);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
