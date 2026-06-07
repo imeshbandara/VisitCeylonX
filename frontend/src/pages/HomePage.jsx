@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import PlaceCard from '../components/PlaceCard';
-import EventCard from '../components/EventCard'; // Import Event Card
-import { fetchPlaces, fetchEvents } from '../api'; // Import fetchEvents
+import { fetchPlaces, fetchEvents } from '../api';
 import { fetchPlaces } from '../api';
 import { ArrowRight, Compass } from 'lucide-react';
 
