@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import PlaceCard from '../components/PlaceCard';
-import { fetchPlaces, fetchEvents } from '../api';
-import { fetchPlaces } from '../api';
-import { ArrowRight, Compass, Sparkles } from 'lucide-react';
+import EventCard from '../components/EventCard';
+import { fetchPlaces, fetchEvents } from '../api'; 
+import { ArrowRight, Sparkles } from 'lucide-react';
+
 
 const HomePage = () => {
   const [places, setPlaces] = useState([]);

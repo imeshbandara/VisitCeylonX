@@ -10,6 +10,7 @@ import touristRoutes from './routes/touristRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import eventRoutes from './routes/eventRoutes.js';
 
 dotenv.config();
 
@@ -24,12 +25,15 @@ mongoose.connect(process.env.MONGO_URI)
 .then(()=> console.log("VisitCeylonX Database Connected Successfully! ✅"))
 .catch(err=>console.log("DB connection error :", err));
 
+app.use(express.json());
+
 app.use('/api/places',placeRoutes);
 app.use('/api/guides',guideRoutes);
 app.use('/api/tourists', touristRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes);
 
 //basic route
 app.get('/' , (req,res)=>{
