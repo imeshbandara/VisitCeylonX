@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import AllPlaces from './pages/AllPlaces';
 import EventDetails from './pages/EventDetails';
+import WeatherGuide from './pages/WeatherGuide.jsx';
 
 
 function App() {
