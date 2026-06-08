@@ -82,7 +82,7 @@ const Navbar = () => {
                   referrerPolicy="no-referrer"
                 />
                 <span className="text-slate-700 font-semibold max-w-[80px] truncate">
-                  {user.fullName.split(' ')[0]}
+                  const nameArray = user?.name?.split(' ') || [];
                 </span>
               </div>
               <button 
