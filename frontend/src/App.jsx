@@ -42,6 +42,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/all-places" element={<AllPlaces />} />
           <Route path="/event/:id" element={<EventDetails />} />
+          <Route path="/weather-guide" element={<WeatherGuide />} />
           <Route 
               path="/planner" 
               element={
