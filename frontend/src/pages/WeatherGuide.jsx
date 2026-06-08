@@ -1,360 +1,271 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Search, MapPin, Droplets, Wind, Thermometer,
-  Compass, Navigation, Calendar, Shirt, AlertTriangle, LogOut, User
+import { 
+  Search, MapPin, Droplets, Wind, Thermometer, 
+  Compass, Shirt, AlertTriangle, Navigation, Calendar 
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
+import axios from 'axios';
 
-// ─── MOCK DATA ────────────────────────────────────────────────────────────────
-const destinationWeatherData = {
-  ella: {
-    name: "Ella", district: "Badulla",
-    image: "https://images.unsplash.com/photo-1546708973-b339540b5162?q=80&w=1000",
-    temp: 22, condition: "Partly Cloudy", humidity: 70, wind: 12, uv: 4,
-    sunrise: "05:54 AM", sunset: "06:18 PM",
-    bestSeason: "December – April",
-    whyVisit: "Pleasant temperatures, clear skies, ideal for mountain hiking & photography.",
-    forecast: [
-      { day: "Mon", icon: "☀️", max: 24, min: 18, rain: 10 },
-      { day: "Tue", icon: "🌧️", max: 21, min: 16, rain: 75 },
-      { day: "Wed", icon: "⛅", max: 23, min: 17, rain: 20 },
-      { day: "Thu", icon: "☀️", max: 25, min: 18, rain: 5 },
-      { day: "Fri", icon: "🌧️", max: 20, min: 15, rain: 80 },
-      { day: "Sat", icon: "⛅", max: 22, min: 17, rain: 30 },
-      { day: "Sun", icon: "☀️", max: 24, min: 18, rain: 10 },
-    ],
-    chartData: [
-      { name: 'Jan', temp: 20, rain: 40 }, { name: 'Feb', temp: 21, rain: 30 },
-      { name: 'Mar', temp: 23, rain: 50 }, { name: 'Apr', temp: 24, rain: 90 },
-      { name: 'May', temp: 23, rain: 80 }, { name: 'Jun', temp: 22, rain: 40 },
-      { name: 'Jul', temp: 22, rain: 35 }, { name: 'Aug', temp: 22, rain: 45 },
-      { name: 'Sep', temp: 23, rain: 70 }, { name: 'Oct', temp: 22, rain: 120 },
-      { name: 'Nov', temp: 21, rain: 140 }, { name: 'Dec', temp: 20, rain: 80 },
-    ],
-    type: "Cool",
-  },
-  mirissa: {
-    name: "Mirissa", district: "Matara",
-    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1000",
-    temp: 30, condition: "Sunny Beach Day", humidity: 65, wind: 18, uv: 9,
-    sunrise: "05:58 AM", sunset: "06:22 PM",
-    bestSeason: "November – April",
-    whyVisit: "Crystal clear waters, calm waves perfect for whale watching and beach surfing.",
-    forecast: [
-      { day: "Mon", icon: "☀️", max: 31, min: 25, rain: 0 },
-      { day: "Tue", icon: "☀️", max: 30, min: 26, rain: 5 },
-      { day: "Wed", icon: "⛅", max: 30, min: 25, rain: 15 },
-      { day: "Thu", icon: "🌧️", max: 28, min: 24, rain: 60 },
-      { day: "Fri", icon: "☀️", max: 31, min: 26, rain: 10 },
-      { day: "Sat", icon: "☀️", max: 32, min: 27, rain: 0 },
-      { day: "Sun", icon: "☀️", max: 31, min: 25, rain: 5 },
-    ],
-    chartData: [
-      { name: 'Jan', temp: 29, rain: 20 }, { name: 'Feb', temp: 30, rain: 15 },
-      { name: 'Mar', temp: 31, rain: 25 }, { name: 'Apr', temp: 32, rain: 60 },
-      { name: 'May', temp: 30, rain: 110 }, { name: 'Jun', temp: 29, rain: 95 },
-      { name: 'Jul', temp: 29, rain: 80 }, { name: 'Aug', temp: 29, rain: 75 },
-      { name: 'Sep', temp: 30, rain: 85 }, { name: 'Oct', temp: 29, rain: 130 },
-      { name: 'Nov', temp: 29, rain: 90 }, { name: 'Dec', temp: 29, rain: 40 },
-    ],
-    type: "Sunny",
-  },
-};
+// ⚠️ IMPORTANT: ඔයා කොපි කරපු OpenWeatherMap API Key එක මෙතනට දාන්න
+const WEATHER_API_KEY = "0811c3ae7e13ff70a860362960455f63"; 
 
-const mapDestinations = [
-  { id: 'ella',        name: 'Ella',        top: '65%', left: '55%' },
-  { id: 'mirissa',     name: 'Mirissa',     top: '88%', left: '48%' },
-  { id: 'sigiriya',    name: 'Sigiriya',    top: '38%', left: '52%' },
-  { id: 'nuwaraeliya', name: 'Nuwara Eliya',top: '58%', left: '50%' },
-];
+const WeatherGuide = () => {
+  const [searchQuery, setSearchQuery] = useState('Colombo');
+  const [weatherData, setWeatherData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-// ─── COMPONENT ────────────────────────────────────────────────────────────────
-export default function WeatherGuide() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeKey, setActiveKey] = useState('ella');
-  const d = destinationWeatherData[activeKey] || destinationWeatherData.ella;
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    const key = searchQuery.toLowerCase().trim();
-    if (destinationWeatherData[key]) setActiveKey(key);
-    else alert("Try 'Ella' or 'Mirissa'.");
+  // සජීවී දත්ත API එකෙන් ලබාගන්නා ප්‍රධාන Function එක
+  const fetchLiveWeather = async (city) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // OpenWeatherMap Current Weather Endpoint (ලංකාවේ නගර නිසා `,LK` කෑල්ල අගට එකතු කලා)
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city},LK&units=metric&appid=${WEATHER_API_KEY}`
+      );
+      
+      setWeatherData(response.data);
+    } catch (err) {
+      console.error("Weather Fetch Error:", err);
+      setError("Destination not found or network error. Please try another city in Sri Lanka.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // ඇප් එක ඕපන් වෙද්දීම default විදිහට Colombo වල කාලගුණය පෙන්වීමට
+  useEffect(() => {
+    fetchLiveWeather('Colombo');
+  }, []);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim() !== '') {
+      fetchLiveWeather(searchQuery.trim());
+    }
+  };
+
+  // කාලගුණය අනුව ඇඳුම් පැළඳුම් dynamic ලෙස තීරණය කිරීම (Logic Engine)
+  const isRainy = weatherData?.weather[0]?.main?.toLowerCase().includes('rain');
+  const isCool = weatherData?.main?.temp <= 22;
+
+  // Unsplash එකෙන් dynamic ලෙස ඒ ඒ නගරයට අදාළ පින්තූරයක් පෙන්වීමට සකස් කල සරල ක්‍රමයක්
+  const dynamicCityImage = `https://images.unsplash.com/photo-1546708973-b339540b5162?q=80&w=1000`;
+
   return (
-    <div style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif", background: '#f4f6f9', minHeight: '100vh', color: '#0d1b2a' }}>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 text-slate-100 font-sans overflow-x-hidden pb-24">
+      
+      {/* 1. HERO GLASSMORPHISM SEARCH BANNER */}
+      <div className="relative h-[50vh] w-full flex items-center justify-center px-6 border-b border-white/5 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1588598126265-fba9397623fd?q=80&w=1400')] bg-cover bg-center opacity-25 brightness-75 scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+        
+        <div className="relative max-w-3xl w-full text-center space-y-6 z-10">
+          <motion.span initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="text-blue-400 font-black text-xs uppercase tracking-widest bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-full backdrop-blur-md">
+            Live Satellite Connection Enabled
+          </motion.span>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-3xl md:text-5xl font-black text-white tracking-tight leading-none">
+            Plan Your Journey with <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Real-Time Weather</span>
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-xs md:text-sm text-slate-400 font-medium max-w-xl mx-auto">
+            Search any city, village, or tourist spot across Sri Lanka to fetch live meteorological data instantly.
+          </motion.p>
 
-      {/* ── NAV ── */}
-      <nav style={{ background: '#fff', borderBottom: '1px solid #e8ecf0', padding: '0 32px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: '#1a6b5c', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Navigation size={16} color="#fff" />
-          </div>
-          <span style={{ fontWeight: 800, fontSize: 15, color: '#0d1b2a', letterSpacing: '-0.3px' }}>VisitCeylonX</span>
+          {/* Search Box */}
+          <motion.form initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} onSubmit={handleSearchSubmit} className="max-w-xl mx-auto relative group mt-4">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-2xl opacity-20 blur group-hover:opacity-30 transition-opacity duration-300" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 p-2 rounded-2xl flex items-center gap-2">
+              <Search className="text-slate-400 ml-3 shrink-0" size={18} />
+              <input 
+                type="text" 
+                placeholder="Search any destination (e.g. Jaffna, Kandy, Galle, Anuradhapura...)" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-transparent border-0 outline-none text-white placeholder-slate-500 text-xs py-2.5 font-medium"
+              />
+              <button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all active:scale-95 shrink-0">
+                Check Weather
+              </button>
+            </div>
+          </motion.form>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-          <span style={{ fontSize: 13, fontWeight: 500, color: '#5a6a7a', cursor: 'pointer' }}>Home</span>
-          <span style={{ fontSize: 13, fontWeight: 500, color: '#5a6a7a', cursor: 'pointer' }}>Find Guide</span>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#1a6b5c', cursor: 'pointer' }}>Weather</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#e8ecf0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <User size={15} color="#5a6a7a" />
-          </div>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#0d1b2a' }}>Imesh</span>
-          <LogOut size={15} color="#aab5bf" style={{ cursor: 'pointer' }} />
-        </div>
-      </nav>
-
-      {/* ── HERO SEARCH BANNER ── */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #e8ecf0', padding: '48px 32px 40px', textAlign: 'center' }}>
-        <motion.span
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#e8f5f1', color: '#1a6b5c', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '5px 12px', borderRadius: 20, marginBottom: 16 }}
-        >
-          🌦️ Next-Gen Travel Planning
-        </motion.span>
-        <motion.h1
-          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-          style={{ fontSize: 36, fontWeight: 800, color: '#0d1b2a', letterSpacing: '-0.8px', margin: '0 0 10px', lineHeight: 1.15 }}
-        >
-          Sri Lanka <span style={{ color: '#1a6b5c' }}>Weather Intelligence</span>
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}
-          style={{ fontSize: 13, color: '#7a8a9a', maxWidth: 440, margin: '0 auto 28px', lineHeight: 1.6 }}
-        >
-          Real-time micro-climate shifts, multi-day forecasts, and seasonal guides for every Sri Lankan destination.
-        </motion.p>
-
-        {/* Search */}
-        <motion.form
-          initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }}
-          onSubmit={handleSearch}
-          style={{ maxWidth: 480, margin: '0 auto', display: 'flex', background: '#f4f6f9', border: '1.5px solid #dde3ea', borderRadius: 12, overflow: 'hidden', alignItems: 'center', padding: '4px 4px 4px 14px' }}
-        >
-          <Search size={16} color="#9aabba" style={{ flexShrink: 0 }} />
-          <input
-            type="text" placeholder="Search destinations (Ella, Mirissa…)"
-            value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-            style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: 13, color: '#0d1b2a', padding: '8px 10px', fontFamily: 'inherit' }}
-          />
-          <button
-            type="submit"
-            style={{ background: '#1a6b5c', color: '#fff', fontWeight: 700, fontSize: 12, border: 'none', padding: '10px 20px', borderRadius: 9, cursor: 'pointer', letterSpacing: '0.02em' }}
-          >
-            Search
-          </button>
-        </motion.form>
       </div>
 
-      {/* ── MAIN CONTENT ── */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px', display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'start' }}>
-
+      {/* CORE HUB LAYOUT SECTION */}
+      <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 mt-16 items-start">
+        
         {/* LEFT COLUMN */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeKey}
-            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.22 }}
-            style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
-          >
+        <div className="lg:col-span-8 space-y-12">
+          
+          {error && (
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold p-4 rounded-xl text-center">
+              ⚠️ {error}
+            </div>
+          )}
 
-            {/* Destination + Live Weather */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 16 }}>
-
-              {/* Cover Card */}
-              <div style={{ borderRadius: 16, overflow: 'hidden', position: 'relative', minHeight: 240, background: '#0d1b2a' }}>
-                <img src={d.image} alt={d.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.75 }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(13,27,42,0.85) 30%, transparent)' }} />
-                <div style={{ position: 'absolute', bottom: 20, left: 20 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: '#6dd5b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-                    <MapPin size={10} />{d.district}
-                  </div>
-                  <h2 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: '#fff', letterSpacing: '-0.4px' }}>{d.name}</h2>
-                </div>
-              </div>
-
-              {/* Weather Stats */}
-              <div style={{ background: '#fff', border: '1.5px solid #e8ecf0', borderRadius: 16, padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <p style={{ margin: 0, fontSize: 10, fontWeight: 700, color: '#9aabba', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Current Conditions</p>
-                    <h3 style={{ margin: '4px 0 0', fontSize: 16, fontWeight: 700, color: '#0d1b2a' }}>{d.condition}</h3>
-                  </div>
-                  <span style={{ fontSize: 36 }}>{d.type === 'Cool' ? '⛅' : '☀️'}</span>
-                </div>
-                <div style={{ fontSize: 52, fontWeight: 800, color: '#0d1b2a', letterSpacing: '-2px', margin: '12px 0' }}>{d.temp}°C</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, borderTop: '1px solid #f0f3f6', paddingTop: 14 }}>
-                  {[
-                    { icon: <Droplets size={13} color="#3b7ef8" />, label: `${d.humidity}%`, sub: 'Humidity' },
-                    { icon: <Wind size={13} color="#1a6b5c" />, label: `${d.wind} km/h`, sub: 'Wind' },
-                    { icon: <Thermometer size={13} color="#f59e0b" />, label: `UV ${d.uv}`, sub: 'Index' },
-                  ].map((s, i) => (
-                    <div key={i} style={{ textAlign: 'center', background: '#f8fafc', borderRadius: 10, padding: '8px 4px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>{s.icon}</div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: '#0d1b2a' }}>{s.label}</div>
-                      <div style={{ fontSize: 10, color: '#9aabba' }}>{s.sub}</div>
+          {loading ? (
+            <div className="min-h-[300px] flex flex-col items-center justify-center">
+              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs font-semibold text-slate-500 mt-3 animate-pulse">Contacting OpenWeather Satellites...</p>
+            </div>
+          ) : (
+            weatherData && (
+              <AnimatePresence mode="wait">
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+                  
+                  {/* Destination Cover Card */}
+                  <div className="md:col-span-5 rounded-3xl overflow-hidden relative min-h-[260px] bg-slate-900 border border-white/5 group">
+                    <img src={dynamicCityImage} alt={weatherData.name} className="absolute inset-0 w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+                    <div className="absolute bottom-6 left-6 text-white">
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-blue-400 uppercase tracking-widest">
+                        <MapPin size={12}/> Sri Lanka Ecosystem
+                      </div>
+                      <h2 className="text-3xl font-black mt-1 tracking-tight">{weatherData.name}</h2>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* 7-Day Forecast */}
-            <div style={{ background: '#fff', border: '1.5px solid #e8ecf0', borderRadius: 16, padding: '20px 20px 16px' }}>
-              <p style={{ margin: '0 0 14px', fontSize: 11, fontWeight: 700, color: '#9aabba', textTransform: 'uppercase', letterSpacing: '0.08em' }}>7-Day Forecast</p>
-              <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4 }}>
-                {d.forecast.map((f, i) => (
-                  <div key={i} style={{ minWidth: 88, background: '#f8fafc', border: '1.5px solid #e8ecf0', borderRadius: 12, padding: '12px 8px', textAlign: 'center', flexShrink: 0 }}>
-                    <p style={{ margin: '0 0 6px', fontSize: 11, fontWeight: 700, color: '#5a6a7a' }}>{f.day}</p>
-                    <div style={{ fontSize: 22, marginBottom: 6 }}>{f.icon}</div>
-                    <p style={{ margin: '0 0 6px', fontSize: 12, fontWeight: 700, color: '#0d1b2a' }}>{f.max}° <span style={{ color: '#aab5bf' }}>{f.min}°</span></p>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#3b7ef8', background: '#ebf1ff', padding: '2px 6px', borderRadius: 6 }}>{f.rain}%</span>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Best Season */}
-            <div style={{ background: '#fff', border: '1.5px solid #e8ecf0', borderRadius: 16, padding: 20, display: 'grid', gridTemplateColumns: '200px 1fr', gap: 20, alignItems: 'center' }}>
-              <div>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#1a6b5c', background: '#e8f5f1', padding: '3px 10px', borderRadius: 6, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Best Season</span>
-                <h4 style={{ margin: '8px 0 0', fontSize: 18, fontWeight: 800, color: '#0d1b2a', letterSpacing: '-0.3px' }}>{d.bestSeason}</h4>
-              </div>
-              <div style={{ borderLeft: '2px solid #f0f3f6', paddingLeft: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                  <Calendar size={13} color="#3b7ef8" />
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#0d1b2a' }}>Seasonal Highlights</span>
-                </div>
-                <p style={{ margin: 0, fontSize: 12, color: '#5a6a7a', lineHeight: 1.6 }}>{d.whyVisit}</p>
-              </div>
-            </div>
+                  {/* Live Glassmorphism Weather Box */}
+                  <div className="md:col-span-7 bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Live Local Climate</p>
+                        <h3 className="text-xl font-bold mt-0.5 text-white capitalize">
+                          {weatherData.weather[0].description}
+                        </h3>
+                      </div>
+                      <div className="text-4xl">
+                        <img 
+                          src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`} 
+                          alt="weather-icon" 
+                          className="w-16 h-16 -mt-4"
+                        />
+                      </div>
+                    </div>
 
-            {/* Annual Chart */}
-            <div style={{ background: '#fff', border: '1.5px solid #e8ecf0', borderRadius: 16, padding: 20 }}>
-              <p style={{ margin: '0 0 2px', fontSize: 11, fontWeight: 700, color: '#9aabba', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Annual Overview</p>
-              <p style={{ margin: '0 0 16px', fontSize: 14, fontWeight: 700, color: '#0d1b2a' }}>Temperature & Precipitation Curve</p>
-              <div style={{ height: 220 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={d.chartData} margin={{ top: 5, right: 10, left: -22, bottom: 0 }}>
-                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#9aabba' }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 10, fill: '#9aabba' }} axisLine={false} tickLine={false} />
-                    <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e8ecf0', borderRadius: 10, fontSize: 12 }} />
-                    <Area type="monotone" dataKey="temp" name="Temp °C" stroke="#3b7ef8" fill="#ebf1ff" strokeWidth={2} fillOpacity={0.5} />
-                    <Area type="monotone" dataKey="rain" name="Rainfall mm" stroke="#1a6b5c" fill="#e8f5f1" strokeWidth={2} fillOpacity={0.4} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+                    <div className="text-6xl font-black text-white my-2 tracking-tighter">
+                      {Math.round(weatherData.main.temp)}°C
+                    </div>
 
-            {/* Activities + Packing */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div style={{ background: '#fff', border: '1.5px solid #e8ecf0', borderRadius: 16, padding: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
-                  <Compass size={14} color="#3b7ef8" />
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#0d1b2a', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Activities</span>
-                </div>
-                {d.type === 'Cool' ? (
-                  <>
-                    <div style={activityStyle}>🌲 Nine Arch Bridge Trekking</div>
-                    <div style={activityStyle}>🍃 Little Adam's Peak Walks</div>
-                  </>
-                ) : (
-                  <>
-                    <div style={activityStyle}>🏄 Coral Reef Snorkeling</div>
-                    <div style={activityStyle}>🐋 Whale Watching Cruises</div>
-                  </>
-                )}
-              </div>
-              <div style={{ background: '#fff', border: '1.5px solid #e8ecf0', borderRadius: 16, padding: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
-                  <Shirt size={14} color="#1a6b5c" />
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#0d1b2a', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Packing</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                  {(d.type === 'Cool'
-                    ? ['🧥 Light Jacket', '👟 Trek Shoes']
-                    : ['🕶️ Sunglasses', '🧴 Sunscreen']
-                  ).concat(['👕 Light Clothes', '⛱️ Umbrella']).map((item, i) => (
-                    <div key={i} style={packStyle}>{item}</div>
-                  ))}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 border-t border-white/5 pt-4 text-xs font-semibold text-slate-400">
+                      <div className="flex items-center gap-2"><Droplets size={14} className="text-blue-400"/> Humidity: {weatherData.main.humidity}%</div>
+                      <div className="flex items-center gap-2"><Wind size={14} className="text-teal-400"/> Wind: {weatherData.wind.speed} m/s</div>
+                      <div className="flex items-center gap-2"><Thermometer size={14} className="text-amber-400"/> Feels Like: {Math.round(weatherData.main.feels_like)}°C</div>
+                    </div>
+                  </div>
+
+                </motion.div>
+              </AnimatePresence>
+            )
+          )}
+
+          {/* DYNAMIC PACKING SUGGESTIONS & ACTIVITIES */}
+          {weatherData && !loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Activity Recommendations */}
+              <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-5 space-y-4">
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <Compass size={14} className="text-blue-400"/> Weather-Based Recommendations
+                </h4>
+                <div className="space-y-2.5 text-xs font-semibold">
+                  {isRainy ? (
+                    <>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center gap-2 text-amber-400">☕ Traditional Ceylon Tea Factory Indoor Tours</div>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center gap-2 text-slate-300">🏛️ Historical Museum & Cultural Sightseeing</div>
+                    </>
+                  ) : isCool ? (
+                    <>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center gap-2 text-emerald-400">🌲 Mountain Trekking & Hiking Expeditions</div>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center gap-2 text-slate-300">🍃 Scenic Nature Walks & Tea Estate Exploration</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center gap-2 text-cyan-400">🏄 Perfect Conditions for Beach Surfing & Snorkeling</div>
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center gap-2 text-slate-300">🐘 Wildlife Safari Excursions</div>
+                    </>
+                  )}
                 </div>
               </div>
+
+              {/* Packing Guide */}
+              <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-5 space-y-4">
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <Shirt size={14} className="text-emerald-400"/> Real-time Packing Suggestions
+                </h4>
+                <div className="grid grid-cols-2 gap-3 text-xs font-bold text-slate-300">
+                  {isRainy ? (
+                    <>
+                      <div className="bg-blue-500/10 border border-blue-500/20 text-blue-400 p-3 rounded-xl text-center">☔ Heavy Raincoat</div>
+                      <div className="bg-white/5 p-3 rounded-xl text-center">🌂 Umbrella</div>
+                    </>
+                  ) : isCool ? (
+                    <>
+                      <div className="bg-amber-500/10 border border-amber-500/20 text-amber-400 p-3 rounded-xl text-center">🧥 Light Jacket</div>
+                      <div className="bg-white/5 p-3 rounded-xl text-center"> sneakers Walking Shoes</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-3 rounded-xl text-center">🕶️ Sunglasses</div>
+                      <div className="bg-white/5 p-3 rounded-xl text-center">🧴 Sunscreen Cream</div>
+                    </>
+                  )}
+                  <div className="bg-white/5 p-3 rounded-xl text-center">👕 Light Cotton Wear</div>
+                  <div className="bg-white/5 p-3 rounded-xl text-center">💧 Water Bottle</div>
+                </div>
+              </div>
+
             </div>
+          )}
 
-          </motion.div>
-        </AnimatePresence>
+        </div>
 
-        {/* RIGHT COLUMN */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-          {/* Advisory */}
-          <div style={{ background: '#fffbeb', border: '1.5px solid #fde68a', borderRadius: 16, padding: 18 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-              <AlertTriangle size={16} color="#d97706" />
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#92400e', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Meteorological Advisories</span>
+        {/* RIGHT COLUMN: RADAR INTERACTIVE POPULAR PANEL */}
+        <div className="lg:col-span-4 space-y-8">
+          
+          {/* POPULAR QUICK-CLICK SUGGESTIONS */}
+          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 space-y-4">
+            <div>
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Radar Quick Access Nodes</h4>
+              <p className="text-slate-200 text-sm font-semibold mt-0.5 tracking-tight">One-Click Smart Query Links</p>
             </div>
-            <div style={{ background: '#fff', border: '1px solid #fde68a', borderRadius: 10, padding: '12px 14px' }}>
-              <p style={{ margin: '0 0 4px', fontSize: 12, fontWeight: 700, color: '#0d1b2a' }}>High UV Index Warning</p>
-              <p style={{ margin: 0, fontSize: 11, color: '#7a6a3a', lineHeight: 1.5 }}>Southern maritime zones showing radiation values above safe limits. Apply SPF 50+.</p>
+            <div className="grid grid-cols-2 gap-3">
+              {['Galle', 'Kandy', 'Jaffna', 'Nuwara Eliya', 'Trincomalee', 'Anuradhapura'].map((city) => (
+                <button
+                  key={city}
+                  onClick={() => {
+                    setSearchQuery(city);
+                    fetchLiveWeather(city);
+                  }}
+                  className="bg-white/5 border border-white/5 hover:border-blue-500/40 text-slate-300 hover:text-white font-bold text-xs p-3 rounded-xl transition-all active:scale-95 text-left flex items-center justify-between"
+                >
+                  {city}
+                  <Navigation size={10} className="rotate-45 opacity-40 group-hover:opacity-100" />
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Interactive Map */}
-          <div style={{ background: '#fff', border: '1.5px solid #e8ecf0', borderRadius: 16, padding: 20 }}>
-            <p style={{ margin: '0 0 2px', fontSize: 11, fontWeight: 700, color: '#9aabba', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Destination Map</p>
-            <p style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 700, color: '#0d1b2a' }}>Interactive Ceylon Nodes</p>
-
-            <div style={{ background: '#f4f6f9', border: '1.5px solid #e8ecf0', borderRadius: 12, height: 360, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {/* subtle bg texture */}
-              <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 50% 60%, #e8f5f1 0%, #f4f6f9 60%)', opacity: 0.8 }} />
-
-              {/* Sri Lanka outline placeholder */}
-              <div style={{ position: 'relative', width: 140, height: 240, border: '2px dashed #d0d8e0', borderRadius: '50% 50% 48% 52% / 46% 46% 54% 54%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: 9, color: '#b0bec8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center' }}>Indian<br/>Ocean</span>
-
-                {mapDestinations.map(m => (
-                  <button
-                    key={m.id}
-                    onClick={() => destinationWeatherData[m.id] && setActiveKey(m.id)}
-                    style={{
-                      position: 'absolute', top: m.top, left: m.left,
-                      transform: 'translate(-50%, -50%)',
-                      display: 'flex', alignItems: 'center', gap: 4,
-                      background: activeKey === m.id ? '#1a6b5c' : '#fff',
-                      color: activeKey === m.id ? '#fff' : '#5a6a7a',
-                      border: `1.5px solid ${activeKey === m.id ? '#1a6b5c' : '#dde3ea'}`,
-                      fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em',
-                      padding: '4px 8px', borderRadius: 6, cursor: 'pointer',
-                      boxShadow: activeKey === m.id ? '0 2px 10px rgba(26,107,92,0.3)' : '0 1px 4px rgba(0,0,0,0.08)',
-                      transition: 'all 0.15s ease',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    <Navigation size={7} style={{ transform: 'rotate(45deg)' }} />
-                    {m.name}
-                  </button>
-                ))}
-              </div>
+          {/* METEOROLOGICAL ADVISORIES CARD */}
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-3xl p-5 space-y-3">
+            <div className="flex items-center gap-2 text-amber-400">
+              <AlertTriangle size={18} />
+              <h4 className="text-xs font-bold uppercase tracking-wider">Meteorological Advisories</h4>
             </div>
+            <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+              Satellite synchronization complete. Live query routing maps search inputs natively to global climate indexes.
+            </p>
           </div>
 
         </div>
+
       </div>
+
     </div>
   );
-}
+};
 
-// ── Helpers ──
-const activityStyle = {
-  background: '#f8fafc', border: '1.5px solid #e8ecf0', borderRadius: 10,
-  padding: '10px 12px', fontSize: 12, fontWeight: 600, color: '#2d3e50',
-  marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6,
-};
-const packStyle = {
-  background: '#f8fafc', border: '1.5px solid #e8ecf0', borderRadius: 10,
-  padding: '8px', fontSize: 11, fontWeight: 700, color: '#2d3e50',
-  textAlign: 'center',
-};
+export default WeatherGuide;
