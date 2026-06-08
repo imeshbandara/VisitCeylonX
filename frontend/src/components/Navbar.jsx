@@ -68,6 +68,14 @@ const Navbar = () => {
           >
             AI Planner
           </Link>
+          <Link 
+  to="/weather-guide" 
+  className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors duration-150 relative"
+>
+  Weather Guide
+  {/* Optional Premium Feature Highlight Tiny Green Dot Accent */}
+  <span className="absolute -top-1 -right-2 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+</Link>
         </div>
 
         {/* AUTHENTICATED USER CONSOLE LOGIC */}
@@ -82,7 +90,7 @@ const Navbar = () => {
                   referrerPolicy="no-referrer"
                 />
                 <span className="text-slate-700 font-semibold max-w-[80px] truncate">
-                  const nameArray = user?.name?.split(' ') || [];
+                  {user.fullName.split(' ')[0]}
                 </span>
               </div>
               <button 
