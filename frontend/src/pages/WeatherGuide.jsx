@@ -5,6 +5,8 @@ import {
   Compass, Shirt, AlertTriangle, Navigation, Calendar 
 } from 'lucide-react';
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchWeatherAndForecast, setActiveCity } from '../store/weatherSlice.js';
 
 // ⚠️ ඔයාගේ ක්‍රියාකාරී OpenWeatherMap API Key එක මෙතන තියෙනවා
 const WEATHER_API_KEY = "0811c3ae7e13ff70a860362960455f63"; 
