@@ -8,7 +8,7 @@ const eventSchema = new mongoose.Schema({
   image: { type: String, required: true }, 
 }, { timestamps: true });
 
-/
+
 eventSchema.pre('save', async function() {
   if (this.image && this.image.startsWith('/public')) {
     this.image = this.image.replace('/public', '');
