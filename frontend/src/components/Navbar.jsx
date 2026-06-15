@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { MapPin, LogOut, ChevronDown } from 'lucide-react';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { authLoginSuccess, authLogout } from '../store/authSlice.js';
+
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation(); // Used to evaluate exact active paths dynamically
