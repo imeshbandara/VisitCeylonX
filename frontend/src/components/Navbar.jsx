@@ -1,34 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { MapPin, LogOut, ChevronDown } from 'lucide-react';
+import { MapPin, LogOut } from 'lucide-react';
 
+// 🛠️ REDUX CORE IMPORTS
 import { useSelector, useDispatch } from 'react-redux';
 import { authLoginSuccess, authLogout } from '../store/authSlice.js';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Used to evaluate exact active paths dynamically
-  const [user, setUser] = useState(null);
+  const location = useLocation(); 
+  const dispatch = useDispatch();
 
-  // Monitors token changes securely across route interactions
+  // 🎯 Redux Global Store එකෙන් කෙලින්ම user දත්ත ලබා ගැනීම
+  const { authData } = useSelector((state) => state.auth);
+  
+  // Google login හෝ Custom JWT login ව්‍යුහයන් දෙකටම ගැලපෙන සේ user වෙන් කර ගැනීම
+  const user = authData?.user || authData?.result || authData;
+
+  // Monitors session changes securely across route interactions
   useEffect(() => {
     const loggedUser = localStorage.getItem("user");
-    if (loggedUser) {
-      setUser(JSON.parse(loggedUser));
-    } else {
-      setUser(null);
+    const token = localStorage.getItem("token");
+    
+    // යම් හෙයකින් LocalStorage එකේ දත්ත තිබී රෙඩක්ස් එක හිස්ව තිබුනොත් එය auto-sync කරයි
+    if (loggedUser && !authData) {
+      dispatch(authLoginSuccess({
+        user: JSON.parse(loggedUser),
+        token: token
+      }));
     }
-  }, [location.pathname]);
+  }, [location.pathname, dispatch, authData]);
 
   const handleLogout = () => {
+    // 🚀 Redux Logout Action එක trigger කිරීම (LocalStorage එකත් එහිදී ක්ලියර් වේ)
+    dispatch(authLogout());
+    
+    // ඔයාගේ පැරණි පද්ධතියේ තිබූ සාමාන්‍ය LocalStorage keys ද අතිරේක ආරක්ෂාවට මකා දැමීම
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setUser(null);
+
     alert("Logged out successfully! See you again. 👋");
     navigate("/");
   };
 
   const isActive = (path) => location.pathname === path;
+
+  // --- 🔒 නම split කිරීමේදී සිදුවන ක්‍රෑෂ් වැළැක්වීමේ ආරක්ෂිත ආරක්ෂණ පවුර ---
+  const rawName = user?.fullName || user?.name || user?.displayName || "";
+  const nameArray = rawName ? rawName.split(' ') : [];
+  const firstName = nameArray.length > 0 ? nameArray[0] : "Traveler";
 
   return (
     // Outer dynamic container with clean alignment layouts
@@ -72,13 +92,14 @@ const Navbar = () => {
             AI Planner
           </Link>
           <Link 
-  to="/weather-guide" 
-  className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors duration-150 relative"
->
-  Weather Guide
-  {/* Optional Premium Feature Highlight Tiny Green Dot Accent */}
-  <span className="absolute -top-1 -right-2 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
-</Link>
+            to="/weather-guide" 
+            className={`text-xs font-bold transition-colors duration-150 relative ${
+              isActive('/weather-guide') ? 'text-blue-600 font-bold' : 'text-slate-600 hover:text-blue-600'
+            }`}
+          >
+            Weather Guide
+            <span className="absolute -top-1 -right-2 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+          </Link>
         </div>
 
         {/* AUTHENTICATED USER CONSOLE LOGIC */}
@@ -86,14 +107,20 @@ const Navbar = () => {
           {user ? (
             <div className="flex items-center gap-3 bg-slate-50 border border-slate-200/60 pl-2 pr-3 py-1 rounded-xl">
               <div className="flex items-center gap-2">
-                <img 
-                  src={user.picture} 
-                  alt={user.fullName} 
-                  className="w-6 h-6 rounded-lg object-cover border border-slate-200"
-                  referrerPolicy="no-referrer"
-                />
+                {user.picture || user.imageUrl ? (
+                  <img 
+                    src={user.picture || user.imageUrl} 
+                    alt={firstName} 
+                    className="w-6 h-6 rounded-lg object-cover border border-slate-200"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="w-6 h-6 bg-blue-600 text-white rounded-lg flex items-center justify-center text-[10px] font-bold uppercase">
+                    {firstName[0]}
+                  </div>
+                )}
                 <span className="text-slate-700 font-semibold max-w-[80px] truncate">
-                  {user.fullName.split(' ')[0]}
+                  {firstName}
                 </span>
               </div>
               <button 
