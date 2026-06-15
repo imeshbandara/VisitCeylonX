@@ -35,4 +35,29 @@ router.post('/', async (req, res) => {
   }
 });
 
+// 🛠️ UPDATE AN EXISTING EVENT BY ID (PUT REQUEST)
+router.put('/:id', async (req, res) => {
+  try {
+    const eventId = req.params.id.trim();
+
+    
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId,
+      { $set: req.body },
+      { new: true, runValidators: true } // 
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ message: "Event not found inside the database" });
+    }
+
+    res.status(200).json({ 
+      message: "Event assets updated successfully! 🎪✨", 
+      data: updatedEvent 
+    });
+  } catch (error) {
+    res.status(400).json({ message: "Update crashed", error: error.message });
+  }
+});
+
 export default router;
