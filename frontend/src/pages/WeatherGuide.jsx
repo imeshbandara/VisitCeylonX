@@ -4,75 +4,40 @@ import {
   Search, MapPin, Droplets, Wind, Thermometer, 
   Compass, Shirt, AlertTriangle, Navigation, Calendar 
 } from 'lucide-react';
-import axios from 'axios';
+
+// 🛠️ REDUX SYSTEM IMPORTS
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchWeatherAndForecast, setActiveCity } from '../store/weatherSlice.js';
 
-// ⚠️ ඔයාගේ ක්‍රියාකාරී OpenWeatherMap API Key එක මෙතන තියෙනවා
-const WEATHER_API_KEY = "0811c3ae7e13ff70a860362960455f63"; 
-
 const WeatherGuide = () => {
-  const [searchQuery, setSearchQuery] = useState('Colombo');
-  const [weatherData, setWeatherData] = useState(null);
-  const [forecastData, setForecastData] = useState([]); // 🛠️ 5-Day Forecast සේව් කිරීමට අලුත් state එකක්
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  
+  // 🎯 Redux Global Store එකෙන් දත්ත සහ ස්ටේට්ස් කියවා ගැනීම
+  const { 
+    currentData: weatherData, 
+    forecastData, 
+    loading, 
+    error, 
+    activeCity 
+  } = useSelector((state) => state.weather);
+  
+  // සර්ච් බාර් එකේ ටයිප් කරන දේ තබා ගැනීමට පමණක් ලෝකල් ස්ටේට් එකක් තබමු
+  const [searchInput, setSearchInput] = useState('');
 
-  // 1. සජීවී දත්ත සහ 5-Day Forecast එක එකවර ලබාගන්නා ප්‍රධාන Function එක
-  const fetchLiveWeatherAndForecast = async (city) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // API Call 1: Current Weather Data
-      const currentWeatherRes = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city},LK&units=metric&appid=${WEATHER_API_KEY}`
-      );
-      
-      // API Call 2: 5-Day / 3-Hour Forecast Data
-      const forecastRes = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city},LK&units=metric&appid=${WEATHER_API_KEY}`
-      );
-
-      // 🛠️ FILTER LOGIC: පැය 3න් 3ට එන දත්ත වලින් දිනකට එක බැගින් (දහවල් 12:00 දත්ත) වෙන් කර ගැනීම
-      const dailyForecasts = forecastRes.data.list.filter((item) => {
-        return item.dt_txt.includes("12:00:00");
-      }).map((item) => {
-        // දිනය පාවිච්චි කරලා සතියේ දවස (Mon, Tue) සොයා ගැනීම
-        const date = new Date(item.dt * 1000);
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-        
-        return {
-          day: dayName,
-          icon: item.weather[0].icon,
-          condition: item.weather[0].main,
-          max: Math.round(item.main.temp_max),
-          min: Math.round(item.main.temp_min),
-          rain: Math.round(item.pop * 100) // item.pop එකෙන් වැස්ස වැටීමේ ප්‍රතිශතය (0 සිට 1 දක්වා) ලැබෙනවා
-        };
-      });
-
-      setWeatherData(currentWeatherRes.data);
-      setForecastData(dailyForecasts); // Forecast State එකට දත්ත ඇතුලත් කිරීම
-    } catch (err) {
-      console.error("Ecosystem Sync Failed:", err);
-      setError("Destination not found or network error. Please try another city in Sri Lanka.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // 🚀 පේජ් එක ලෝඩ් වෙද්දී සහ activeCity එක මාරු වෙද්දී Redux Action එක trigger කිරීම
   useEffect(() => {
-    fetchLiveWeatherAndForecast('Colombo');
-  }, []);
+    dispatch(fetchWeatherAndForecast(activeCity));
+  }, [dispatch, activeCity]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.trim() !== '') {
-      fetchLiveWeatherAndForecast(searchQuery.trim());
+    if (searchInput.trim() !== '') {
+      dispatch(setActiveCity(searchInput.trim())); // Redux city එක අප්ඩේට් කිරීම
+      setSearchInput(''); // සර්ච් කිරීමෙන් පසු input එක හිස් කිරීම
     }
   };
 
+  // කාලගුණය අනුව ඇඳුම් පැළඳුම් සහ ඇක්ටිවිටීස් dynamic ලෙස තීරණය කරන Logic Engine
   const isRainy = weatherData?.weather[0]?.main?.toLowerCase().includes('rain');
   const isCool = weatherData?.main?.temp <= 22;
   const dynamicCityImage = `https://images.unsplash.com/photo-1546708973-b339540b5162?q=80&w=1000`;
@@ -104,8 +69,8 @@ const WeatherGuide = () => {
               <input 
                 type="text" 
                 placeholder="Search any destination (e.g. Ella, Jaffna, Galle, Trincomalee...)" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 className="w-full bg-transparent border-0 outline-none text-white placeholder-slate-500 text-xs py-2.5 font-medium"
               />
               <button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all active:scale-95 shrink-0">
@@ -146,7 +111,7 @@ const WeatherGuide = () => {
                       <div className="absolute bottom-6 left-6 text-white">
                         <div className="flex items-center gap-1 text-[10px] font-bold text-blue-400 uppercase tracking-widest">
                           <MapPin size={12}/> Sri Lanka Ecosystem
-                      </div>
+                        </div>
                         <h2 className="text-3xl font-black mt-1 tracking-tight">{weatherData.name}</h2>
                       </div>
                     </div>
@@ -164,7 +129,7 @@ const WeatherGuide = () => {
                           <img 
                             src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`} 
                             alt="weather-icon" 
-                            className="w-16 h-16 "
+                            className="w-16 h-16"
                           />
                         </div>
                       </div>
@@ -183,7 +148,7 @@ const WeatherGuide = () => {
                   </motion.div>
                 </AnimatePresence>
 
-                {/* 🛠️ NEW: REAL 5-DAY METEOROLOGICAL FORECAST MATRICES */}
+                {/* REAL 5-DAY METEOROLOGICAL FORECAST MATRICES */}
                 <div className="space-y-4">
                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                     <Calendar size={14} className="text-blue-500" /> Upcoming 5-Day Satellite Forecast
@@ -208,6 +173,8 @@ const WeatherGuide = () => {
           {/* DYNAMIC PACKING SUGGESTIONS & ACTIVITIES */}
           {weatherData && !loading && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Weather Based Activities */}
               <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-5 space-y-4">
                 <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                   <Compass size={14} className="text-blue-400"/> Weather-Based Recommendations
@@ -232,6 +199,7 @@ const WeatherGuide = () => {
                 </div>
               </div>
 
+              {/* Real Time Packing Guides */}
               <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-5 space-y-4">
                 <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                   <Shirt size={14} className="text-emerald-400"/> Real-time Packing Suggestions
@@ -264,6 +232,8 @@ const WeatherGuide = () => {
 
         {/* RIGHT COLUMN */}
         <div className="lg:col-span-4 space-y-8">
+          
+          {/* RADAR QUICK ACCESS NODES (Connected to Redux toolkit flow) */}
           <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 space-y-4">
             <div>
               <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Radar Quick Access Nodes</h4>
@@ -274,13 +244,12 @@ const WeatherGuide = () => {
                 <button
                   key={city}
                   onClick={() => {
-                    setSearchQuery(city);
-                    fetchLiveWeatherAndForecast(city);
+                    dispatch(setActiveCity(city)); // 🚀 ක්ලික් කරපු සැනින් Redux active city එක අප්ඩේට් වේ
                   }}
-                  className="bg-white/5 border border-white/5 hover:border-blue-500/40 text-slate-300 hover:text-white font-bold text-xs p-3 rounded-xl transition-all active:scale-95 text-left flex items-center justify-between"
+                  className={`border font-bold text-xs p-3 rounded-xl transition-all active:scale-95 text-left flex items-center justify-between group ${activeCity === city ? 'bg-blue-600/20 border-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'bg-white/5 border-white/5 text-slate-300 hover:text-white hover:border-white/20'}`}
                 >
                   {city}
-                  <Navigation size={10} className="rotate-45 opacity-40" />
+                  <Navigation size={10} className={`rotate-45 transition-transform ${activeCity === city ? 'text-blue-400 translate-x-0.5' : 'opacity-40 group-hover:opacity-100'}`} />
                 </button>
               ))}
             </div>
