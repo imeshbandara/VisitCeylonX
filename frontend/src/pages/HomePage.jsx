@@ -1,60 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import PlaceCard from '../components/PlaceCard';
 import EventCard from '../components/EventCard';
-import { fetchPlaces, fetchEvents } from '../api'; 
+import { fetchEvents } from '../api'; 
 import { ArrowRight, Sparkles } from 'lucide-react';
 
+// 🛠️ REDUX IMPORTS එකතු කරන්න
 import { useSelector, useDispatch } from 'react-redux';
 import { getGlobalPlaces } from '../store/placesSlice.js';
 
-
 const HomePage = () => {
-  const [places, setPlaces] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  
+  // 🎯 Redux Global Store එකෙන් Places දත්ත කියවා ගැනීම
+  const { allPlaces: places, loading: placesLoading, error: placesError } = useSelector((state) => state.places);
+  
+  // Events සඳහා තවම රෙඩක්ස් දාලා නැති නිසා දැනට ලෝකල් ස්ටේට් එකක් ලෙස තබා ගනිමු
+  const [events, setEvents] = React.useState([]);
+  const [eventsLoading, setEventsLoading] = React.useState(true);
 
   useEffect(() => {
-    const getPlaces = async () => {
+    // 🚀 1. Trigger Redux Action to fetch destinations
+    dispatch(getGlobalPlaces());
+
+    // 2. Fetch events locally for now
+    const getEvents = async () => {
       try {
-        const { data } = await fetchPlaces();
-        setPlaces(data);
-
-        const eventsRes = await fetchEvents(); // Fetch events from DB
+        const eventsRes = await fetchEvents();
         setEvents(eventsRes.data);
-
       } catch (error) {
-        console.error("Error fetching places:", error);
+        console.error("Error loading events:", error);
       } finally {
-        setLoading(false);
+        setEventsLoading(false);
       }
     };
-    getPlaces();
-  }, []);
+    getEvents();
+  }, [dispatch]);
+
+  const mainLoading = placesLoading || eventsLoading;
 
   return (
-    <div className="min-h-screen bg-slate-50/50">
-      {/* Video Hero Section */}
+    <div className="min-h-screen bg-slate-50/50 pb-24">
       <Hero />
       
-      {/* POPULAR PLACES CONTAINER CONTENT */}
+      {/* 1. POPULAR PLACES SECTION */}
       <section className="py-20 px-8 max-w-7xl mx-auto">
         <div className="mb-12">
-          <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">
-            Curated Collections
-          </p>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Popular Destinations
-          </h2>
-          <p className="text-xs font-semibold text-slate-500 mt-1">
-            Explore the most beautiful places in Sri Lanka.
-          </p>
+          <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Curated Collections</p>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Popular Destinations</h2>
+          <p className="text-xs font-semibold text-slate-500 mt-1">Explore the most beautiful places in Sri Lanka.</p>
         </div>
         
-
-        {loading ? (
-          /* Premium clean skeleton pulse placeholder */
+        {placesError && <div className="text-xs text-rose-400 font-bold mb-4">⚠️ {placesError}</div>}
+        
+        {placesLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((n) => (
               <div key={n} className="bg-white h-72 rounded-2xl border border-slate-100 p-4 space-y-4 animate-pulse">
@@ -65,65 +65,45 @@ const HomePage = () => {
             ))}
           </div>
         ) : (
-          /* Wrap details and button into a clean structural fragment */
           <>
-            {/* STRUCTURED GRID LAYOUT - LIMITED TO ONLY 6 PLACES */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {places.slice(0, 6).map((place) => (
                 <PlaceCard key={place._id} place={place} />
               ))}
             </div>
-
-            {/* RIGHT SIDE CORNER AT THE BOTTOM: SEE ALL BUTTON */}
             <div className="flex justify-end mt-12">
-              <Link 
-                to="/all-places" 
-                className="inline-flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold px-5 py-3 rounded-xl transition-all duration-200 shadow-sm active:scale-95 group"
-              >
-                See All Places
-                <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+              <Link to="/all-places" className="inline-flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold px-5 py-3 rounded-xl transition-all duration-200 shadow-sm group">
+                See All Places <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </div>
           </>
         )}
       </section>
 
-      {/* 🛠️ 2. NEW PREMIUM EVENTS & FESTIVALS SECTION */}
+      {/* 2. EVENTS & FESTIVALS SECTION */}
       <section className="py-12 border-t border-slate-100 bg-white/40">
         <div className="max-w-7xl mx-auto px-8">
-          
-          {/* Header */}
           <div className="mb-10">
             <span className="inline-flex items-center gap-1 text-blue-600 font-bold text-[10px] uppercase tracking-widest mb-1">
               <Sparkles size={10} className="fill-blue-100" /> Cultural Heritage
             </span>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Events & Festivals
-            </h2>
-            <p className="text-xs text-slate-500 font-semibold mt-1">
-              Immerse yourself in rich island traditions and seasonal celebrations.
-            </p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Events & Festivals</h2>
+            <p className="text-xs text-slate-500 font-semibold mt-1">Immerse yourself in rich island traditions and seasonal celebrations.</p>
           </div>
 
-          {/* PREMIUM HORIZONTAL SCROLL CONSOLE */}
-          {loading ? (
+          {eventsLoading ? (
             <div className="text-xs text-slate-400 font-semibold animate-pulse">Syncing events...</div>
           ) : (
-            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 snap-x no-scrollbar scroll-smooth [mask-image:linear-gradient(to_right,black_85%,transparent)]">
+            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 snap-x no-scrollbar scroll-smooth">
               {events.map((event) => (
                 <div key={event._id} className="snap-start">
                   <EventCard event={event} />
                 </div>
               ))}
-              {events.length === 0 && (
-                <div className="text-xs text-slate-400 font-semibold py-8">No current events listed in database.</div>
-              )}
             </div>
           )}
-
         </div>
       </section>
-
     </div>
   );
 };
