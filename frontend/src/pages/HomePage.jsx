@@ -3,42 +3,25 @@ import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import PlaceCard from '../components/PlaceCard';
 import EventCard from '../components/EventCard';
-import { fetchEvents } from '../api'; 
 import { ArrowRight, Sparkles } from 'lucide-react';
 
-// 🛠️ REDUX IMPORTS එකතු කරන්න
+// 🛠️ REDUX CORE IMPORTS
 import { useSelector, useDispatch } from 'react-redux';
 import { getGlobalPlaces } from '../store/placesSlice.js';
+import { getGlobalEvents } from '../store/eventsSlice.js'; // 👈 Events Action එක Import කිරීම
 
 const HomePage = () => {
   const dispatch = useDispatch();
   
-  // 🎯 Redux Global Store එකෙන් Places දත්ත කියවා ගැනීම
+  // 🎯 Redux Global Store එකෙන් Places සහ Events දත්ත කියවා ගැනීම
   const { allPlaces: places, loading: placesLoading, error: placesError } = useSelector((state) => state.places);
-  
-  // Events සඳහා තවම රෙඩක්ස් දාලා නැති නිසා දැනට ලෝකල් ස්ටේට් එකක් ලෙස තබා ගනිමු
-  const [events, setEvents] = React.useState([]);
-  const [eventsLoading, setEventsLoading] = React.useState(true);
+  const { allEvents: events, loading: eventsLoading, error: eventsError } = useSelector((state) => state.events);
 
   useEffect(() => {
-    // 🚀 1. Trigger Redux Action to fetch destinations
+    // 🚀 Places සහ Events Actions දෙකම එකවර Global Store එක හරහා Trigger කිරීම
     dispatch(getGlobalPlaces());
-
-    // 2. Fetch events locally for now
-    const getEvents = async () => {
-      try {
-        const eventsRes = await fetchEvents();
-        setEvents(eventsRes.data);
-      } catch (error) {
-        console.error("Error loading events:", error);
-      } finally {
-        setEventsLoading(false);
-      }
-    };
-    getEvents();
+    dispatch(getGlobalEvents());
   }, [dispatch]);
-
-  const mainLoading = placesLoading || eventsLoading;
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-24">
@@ -80,7 +63,7 @@ const HomePage = () => {
         )}
       </section>
 
-      {/* 2. EVENTS & FESTIVALS SECTION */}
+      {/* 2. EVENTS & FESTIVALS SECTION (100% Redux Connected) */}
       <section className="py-12 border-t border-slate-100 bg-white/40">
         <div className="max-w-7xl mx-auto px-8">
           <div className="mb-10">
@@ -91,8 +74,10 @@ const HomePage = () => {
             <p className="text-xs text-slate-500 font-semibold mt-1">Immerse yourself in rich island traditions and seasonal celebrations.</p>
           </div>
 
+          {eventsError && <div className="text-xs text-rose-400 font-bold mb-4">⚠️ {eventsError}</div>}
+
           {eventsLoading ? (
-            <div className="text-xs text-slate-400 font-semibold animate-pulse">Syncing events...</div>
+            <div className="text-xs text-slate-400 font-semibold animate-pulse py-6">Syncing cultural heritage events matrix...</div>
           ) : (
             <div className="flex gap-6 overflow-x-auto pb-6 pt-2 snap-x no-scrollbar scroll-smooth">
               {events.map((event) => (
