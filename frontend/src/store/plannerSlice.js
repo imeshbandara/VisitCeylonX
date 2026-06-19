@@ -7,7 +7,7 @@ export const generateAIItinerary = createAsyncThunk(
   async (plannerData, { rejectWithValue }) => {
     try {
       // ඔයාගේ Backend AI Endpoint එක මෙතනට සම්බන්ධ කරන්න
-      const response = await axios.post('http://localhost:5002/api/ai/generate-plan', plannerData);
+     const response = await axios.post('http://localhost:5002/api/ai/generate-plan', plannerData);
       return response?.data?.itinerary || response?.data;
     } catch (error) {
       return rejectWithValue(error.message || "Failed to finalize AI Travel Plan.");

@@ -27,7 +27,7 @@ router.post('/generate-plan', async (req, res) => {
         if (primaryError.status === 503) {
             console.warn("Gemini 2.5 is busy. Trying fallback model: gemini-1.5-pro...");
             try {
-                const fallbackModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+                const fallbackModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
                 const result = await fallbackModel.generateContent(prompt);
                 const response = await result.response;
                 return res.status(200).json({ plan: response.text() });
