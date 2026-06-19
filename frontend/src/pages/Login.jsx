@@ -52,8 +52,8 @@ const Login = () => {
 
     try {
       const endpoint = isSignUp 
-        ? 'http://localhost:5002/api/users/signup' 
-        : 'http://localhost:5002/api/users/signin';
+  ? 'http://localhost:5002/api/tourists/register'  //  Tourists API Register
+  : 'http://localhost:5002/api/tourists/login';     //  Tourists API Login
 
       const { data } = await axios.post(endpoint, formData);
 
