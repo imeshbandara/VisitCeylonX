@@ -79,7 +79,7 @@ const ProfilePage = () => {
 
     try {
       // Backend එකට දත්ත යවා ඩේටාබේස් එක අප්ඩේට් කිරීම
-      const { data } = await axios.put(`http://localhost:5002/api/tourists/update-profile/${user.id || user._id}`, profileData);
+     const { data } = await axios.put(`http://localhost:5002/api/tourists/update-profile/${profileData.email}`, profileData);
       
       // 🎯 Redux Store එක සහ LocalStorage එක අලුත් දත්ත වලින් update කිරීම
       dispatch(authLoginSuccess(data));
