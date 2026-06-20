@@ -76,4 +76,38 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.put('/update-profile/:email', async (req, res) => {
+    try {
+        const { email } = req.params;
+        const { fullName, country, contactNumber, gender, profession, picture } = req.body;
+
+        // ඊමේල් එක මඟින් සංචාරකයා සොයාගෙන ඔහුගේ දත්ත අප්ඩේට් කිරීම
+        const updatedTourist = await Tourist.findOneAndUpdate(
+            { email: email },
+            { 
+                fullName, 
+                country, 
+                contactNumber, 
+                gender, 
+                profession, 
+                picture 
+            },
+            { new: true } 
+        );
+
+        if (!updatedTourist) {
+            return res.status(404).json({ message: "Tourist cluster not found with this email context." });
+        }
+
+        res.status(200).json({ 
+            result: updatedTourist, 
+            token: req.headers.authorization?.split(" ")[1], 
+            message: "Profile committed successfully!" 
+        });
+    } catch (error) {
+        console.error("BACKEND UPDATE CRASH:", error);
+        res.status(500).json({ message: "Internal Server Error during profile patch execution." });
+    }
+});
+
 export default router;
