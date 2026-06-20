@@ -16,6 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AllPlaces from './pages/AllPlaces';
 import EventDetails from './pages/EventDetails';
 import WeatherGuide from './pages/WeatherGuide.jsx';
+import ProfilePage from './pages/ProfilePage.jsx';
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
           <Route path="/all-places" element={<AllPlaces />} />
           <Route path="/event/:id" element={<EventDetails />} />
           <Route path="/weather-guide" element={<WeatherGuide />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route 
               path="/planner" 
               element={
