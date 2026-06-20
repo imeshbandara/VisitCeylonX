@@ -105,32 +105,21 @@ const Navbar = () => {
         {/* AUTHENTICATED USER CONSOLE LOGIC */}
         <div className="hidden md:flex items-center gap-4 text-xs">
           {user ? (
-            <div className="flex items-center gap-3 bg-slate-50 border border-slate-200/60 pl-2 pr-3 py-1 rounded-xl">
-              <div className="flex items-center gap-2">
-                {user.picture || user.imageUrl ? (
-                  <img 
-                    src={user.picture || user.imageUrl} 
-                    alt={firstName} 
-                    className="w-6 h-6 rounded-lg object-cover border border-slate-200"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <div className="w-6 h-6 bg-blue-600 text-white rounded-lg flex items-center justify-center text-[10px] font-bold uppercase">
-                    {firstName[0]}
-                  </div>
-                )}
-                <span className="text-slate-700 font-semibold max-w-[80px] truncate">
-                  {firstName}
-                </span>
-              </div>
-              <button 
-                onClick={handleLogout}
-                className="text-slate-400 hover:text-rose-600 transition-colors border-l pl-2 border-slate-200"
-                title="Sign Out"
-              >
-                <LogOut size={14} strokeWidth={2.5} />
-              </button>
-            </div>
+  <div className="flex items-center gap-3 bg-slate-50 border border-slate-200/60 pl-2 pr-3 py-1 rounded-xl">
+    {/* 🚀 Link එක එකතු කිරීම: */}
+    <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity pointer-events-auto cursor-pointer">
+      {user.picture || user.imageUrl ? (
+        <img src={user.picture || user.imageUrl} alt={firstName} className="w-6 h-6 rounded-lg object-cover border border-slate-200" />
+      ) : (
+        <div className="w-6 h-6 bg-blue-600 text-white rounded-lg flex items-center justify-center text-[10px] font-bold uppercase">{firstName[0]}</div>
+      )}
+      <span className="text-slate-700 font-semibold max-w-[80px] truncate">{firstName}</span>
+    </Link>
+    
+    <button onClick={handleLogout} className="text-slate-400 hover:text-rose-600 transition-colors border-l pl-2 border-slate-200 pointer-events-auto">
+      <LogOut size={14} strokeWidth={2.5} />
+    </button>
+  </div>
           ) : (
             /* STRIPE-STYLE LOGIN REGISTER CTA SPLIT */
             <div className="flex items-center gap-5">
