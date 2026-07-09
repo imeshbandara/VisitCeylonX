@@ -1,5 +1,5 @@
 import React from 'react';
-import { Leaf } from 'lucide-react';
+import { Leaf, Landmark } from 'lucide-react';
 
 const WhySriLanka = () => {
   return (
