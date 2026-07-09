@@ -8,7 +8,13 @@ const WhySriLanka = () => {
         className="absolute inset-0 z-0 opacity-5 bg-cover bg-center bg-no-repeat backdrop-blur-xl"
         style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1588096344392-56490dd84370?q=80&w=2070&auto=format&fit=crop")' }}
       />
-      {/* Component Content */}
+      
+      {/* Inner Grid Structure */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-8 py-24 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12">
+        {/* Left Column (The Hook) */}
+        
+        {/* Right Column (The Matrix) */}
+      </div>
     </section>
   );
 };
