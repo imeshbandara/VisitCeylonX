@@ -17,6 +17,17 @@ const extractText = (children) => {
   return '';
 };
 
+const isTimeOfDay = (text) => /Morning|Afternoon|Evening/i.test(text);
+
+const TimeOfDayHeading = ({ props, Tag }) => {
+  return (
+    <div className="flex items-center gap-3 mt-6 mb-3 relative ml-2">
+      <div className="w-3 h-3 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)] z-10 relative" />
+      <Tag className="text-lg font-bold text-slate-800 m-0 uppercase tracking-wide" {...props} />
+    </div>
+  );
+};
+
 const customRenderers = {
   h2: ({ node, ...props }) => {
     const text = extractText(props.children);
@@ -40,7 +51,24 @@ const customRenderers = {
         </div>
       );
     }
+    if (isTimeOfDay(text)) {
+      return <TimeOfDayHeading props={props} Tag="h3" />;
+    }
     return <h3 className="text-xl font-bold mt-6 mb-3 text-slate-800" {...props} />;
+  },
+  h4: ({ node, ...props }) => {
+    const text = extractText(props.children);
+    if (isTimeOfDay(text)) {
+      return <TimeOfDayHeading props={props} Tag="h4" />;
+    }
+    return <h4 className="text-lg font-bold mt-4 mb-2 text-slate-800" {...props} />;
+  },
+  h5: ({ node, ...props }) => {
+    const text = extractText(props.children);
+    if (isTimeOfDay(text)) {
+      return <TimeOfDayHeading props={props} Tag="h5" />;
+    }
+    return <h5 className="text-base font-bold mt-4 mb-2 text-slate-800" {...props} />;
   },
 };
 
