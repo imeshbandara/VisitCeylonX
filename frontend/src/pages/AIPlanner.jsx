@@ -91,6 +91,8 @@ const customRenderers = {
       <blockquote className="m-0 border-none p-0 not-italic text-sm font-medium leading-relaxed" {...props} />
     </div>
   ),
+  p: ({ node, ...props }) => <p className="text-slate-600 leading-relaxed my-3" {...props} />,
+  a: ({ node, ...props }) => <a className="text-teal-600 hover:text-teal-700 underline underline-offset-2 decoration-teal-200 hover:decoration-teal-500 transition-colors font-medium" {...props} />,
 };
 
 const AIPlanner = () => {
