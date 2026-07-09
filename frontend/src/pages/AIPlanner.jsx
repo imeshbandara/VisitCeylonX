@@ -17,6 +17,9 @@ const extractText = (children) => {
   return '';
 };
 
+const customRenderers = {
+};
+
 const AIPlanner = () => {
   const dispatch = useDispatch();
 
@@ -162,7 +165,9 @@ const AIPlanner = () => {
       {/* Markdown Styled Wrapper */}
       <div className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-headings:font-bold prose-h3:text-teal-600 prose-p:text-slate-600 prose-li:text-slate-600 prose-strong:text-slate-800 text-sm leading-relaxed">
         {/* 🧠 105% Safe Extraction Logic */}
-        <ReactMarkdown>{result?.plan || result?.itinerary || (typeof result === 'string' ? result : '')}</ReactMarkdown>
+        <ReactMarkdown components={customRenderers}>
+          {result?.plan || result?.itinerary || (typeof result === 'string' ? result : '')}
+        </ReactMarkdown>
       </div>
     </motion.div>
   )}
