@@ -7,9 +7,16 @@ const WhySriLanka = () => {
     <section className="relative min-h-[85vh] flex items-center bg-slate-50 overflow-hidden">
       {/* Background Image Layer */}
       <div 
-        className="absolute inset-0 z-0 opacity-5 bg-cover bg-center bg-no-repeat backdrop-blur-xl"
-        style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1588096344392-56490dd84370?q=80&w=2070&auto=format&fit=crop")' }}
-      />
+  className="absolute inset-0 z-0"
+  style={{
+    backgroundImage: 'url("public/images/bg.jpg")',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    filter: 'blur(8px)',
+    transform: 'scale(1.1)', // prevents blurred edges showing
+    opacity: 0.6,
+  }}
+/>
       
       {/* Inner Grid Structure */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-8 py-24 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12">
@@ -18,11 +25,11 @@ const WhySriLanka = () => {
   <div className="sticky top-32">
     <h2 className="text-6xl md:text-7xl lg:text-8xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
       Why should you visit <br/>
-      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-yellow-400">
         Sri Lanka?
       </span>
     </h2>
-    <p className="mt-6 text-slate-500 font-medium text-lg max-w-md leading-relaxed">
+    <p className="mt-6 text-black-500 font-medium text-lg max-w-md leading-relaxed">
       Discover a land of endless exploration, where ancient temples, dense jungles, and golden beaches coexist in perfect harmony.
     </p>
   </div>
