@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import PlaceCard from '../components/PlaceCard';
 import EventCard from '../components/EventCard';
+import WhySriLanka from '../components/WhySriLanka';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 // 🛠️ REDUX CORE IMPORTS
@@ -89,6 +90,9 @@ const HomePage = () => {
           )}
         </div>
       </section>
+
+      {/* 3. WHY SRI LANKA SECTION */}
+      <WhySriLanka />
     </div>
   );
 };
