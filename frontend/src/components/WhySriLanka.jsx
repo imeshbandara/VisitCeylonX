@@ -1,5 +1,5 @@
 import React from 'react';
-import { Leaf, Landmark } from 'lucide-react';
+import { Leaf, Landmark, HeartHandshake } from 'lucide-react';
 
 const WhySriLanka = () => {
   return (
@@ -30,6 +30,26 @@ const WhySriLanka = () => {
             <div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">Unrivaled Biodiversity</h3>
               <p className="text-slate-600 leading-relaxed text-sm">From pristine beaches to wildlife safaris in hours.</p>
+            </div>
+          </div>
+          
+          <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-slate-100 flex gap-6 items-start hover:shadow-md transition-shadow">
+            <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
+              <Landmark className="text-orange-500" size={24} />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">2500+ Years of Living History</h3>
+              <p className="text-slate-600 leading-relaxed text-sm">Ancient rock fortresses, temples, and engineering marvels.</p>
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-slate-100 flex gap-6 items-start hover:shadow-md transition-shadow">
+            <div className="w-14 h-14 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+              <HeartHandshake className="text-rose-500" size={24} />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">The Warmest Hospitality Matrix</h3>
+              <p className="text-slate-600 leading-relaxed text-sm">World-renowned smiles and authentic cultural exchanges.</p>
             </div>
           </div>
         </div>
