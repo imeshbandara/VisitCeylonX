@@ -30,6 +30,18 @@ const customRenderers = {
     }
     return <h2 className="text-2xl font-bold mt-8 mb-4 text-slate-800" {...props} />;
   },
+  h3: ({ node, ...props }) => {
+    const text = extractText(props.children);
+    if (text.match(/Day \d+/i)) {
+      return (
+        <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-4 rounded-xl shadow-md my-8 flex items-center gap-3">
+          <Calendar className="text-indigo-100" size={24} />
+          <h3 className="text-xl font-bold m-0" {...props} />
+        </div>
+      );
+    }
+    return <h3 className="text-xl font-bold mt-6 mb-3 text-slate-800" {...props} />;
+  },
 };
 
 const AIPlanner = () => {
