@@ -21,6 +21,8 @@ const WhySriLanka = () => {
         </div>
         
         {/* Right Column (The Matrix) */}
+        <div className="lg:col-span-7 flex flex-col gap-8 mt-12 lg:mt-0">
+        </div>
       </div>
     </section>
   );
