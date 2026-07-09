@@ -70,6 +70,18 @@ const customRenderers = {
     }
     return <h5 className="text-base font-bold mt-4 mb-2 text-slate-800" {...props} />;
   },
+  strong: ({ node, ...props }) => {
+    const text = extractText(props.children);
+    if (isTimeOfDay(text)) {
+      return (
+        <span className="inline-flex items-center gap-2 text-amber-600 bg-amber-50 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border border-amber-200 my-2 shadow-sm">
+          <Compass size={14} className="text-amber-500" />
+          {props.children}
+        </span>
+      );
+    }
+    return <strong className="font-extrabold text-slate-900" {...props} />;
+  },
 };
 
 const AIPlanner = () => {
