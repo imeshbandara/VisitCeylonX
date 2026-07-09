@@ -7,6 +7,16 @@ import ReactMarkdown from 'react-markdown';
 import { useSelector, useDispatch } from 'react-redux';
 import { updatePlannerFormField, generateAIItinerary } from '../store/plannerSlice.js';
 
+// 📝 Text Extraction Utility for Custom Markdown Renderer
+const extractText = (children) => {
+  if (typeof children === 'string') return children;
+  if (Array.isArray(children)) return children.map(extractText).join('');
+  if (children && typeof children === 'object' && children.props && children.props.children) {
+    return extractText(children.props.children);
+  }
+  return '';
+};
+
 const AIPlanner = () => {
   const dispatch = useDispatch();
 
