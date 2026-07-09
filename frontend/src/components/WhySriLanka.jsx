@@ -55,7 +55,13 @@ const WhySriLanka = () => {
             </div>
           </motion.div>
 
-          <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-slate-100 flex gap-6 items-start hover:shadow-md transition-shadow">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-slate-100 flex gap-6 items-start hover:shadow-md transition-shadow"
+          >
             <div className="w-14 h-14 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
               <HeartHandshake className="text-rose-500" size={24} />
             </div>
@@ -63,7 +69,7 @@ const WhySriLanka = () => {
               <h3 className="text-xl font-bold text-slate-900 mb-2">The Warmest Hospitality Matrix</h3>
               <p className="text-slate-600 leading-relaxed text-sm">World-renowned smiles and authentic cultural exchanges.</p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
