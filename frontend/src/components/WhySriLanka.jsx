@@ -12,6 +12,8 @@ const WhySriLanka = () => {
       {/* Inner Grid Structure */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-8 py-24 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12">
         {/* Left Column (The Hook) */}
+        <div className="lg:col-span-5 relative">
+        </div>
         
         {/* Right Column (The Matrix) */}
       </div>
