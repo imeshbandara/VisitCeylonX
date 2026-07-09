@@ -1,5 +1,6 @@
 import React from 'react';
 import { Leaf, Landmark, HeartHandshake } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const WhySriLanka = () => {
   return (
