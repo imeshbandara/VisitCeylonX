@@ -19,6 +19,9 @@ const WhySriLanka = () => {
             <h2 className="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
               Why should you visit <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">Sri Lanka?</span>
             </h2>
+            <p className="mt-6 text-slate-500 font-medium text-lg max-w-md leading-relaxed">
+              Discover a land of endless exploration, where ancient temples, dense jungles, and golden beaches coexist in perfect harmony.
+            </p>
           </div>
         </div>
         
