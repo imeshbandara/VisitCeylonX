@@ -27,8 +27,11 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-slate-50/50 pb-24">
       <Hero />
+
+      {/* 1. WHY SRI LANKA SECTION */}
+      <WhySriLanka />
       
-      {/* 1. POPULAR PLACES SECTION */}
+      {/* 2. POPULAR PLACES SECTION */}
       <section className="py-20 px-8 max-w-7xl mx-auto">
         <div className="mb-12">
           <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Curated Collections</p>
@@ -64,7 +67,7 @@ const HomePage = () => {
         )}
       </section>
 
-      {/* 2. EVENTS & FESTIVALS SECTION (100% Redux Connected) */}
+      {/* 3. EVENTS & FESTIVALS SECTION (100% Redux Connected) */}
       <section className="py-12 border-t border-slate-100 bg-white/40">
         <div className="max-w-7xl mx-auto px-8">
           <div className="mb-10">
@@ -91,8 +94,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* 3. WHY SRI LANKA SECTION */}
-      <WhySriLanka />
+      
     </div>
   );
 };
