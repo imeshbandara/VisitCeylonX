@@ -227,7 +227,7 @@ const AIPlanner = () => {
       </div>
       
       {/* Markdown Styled Wrapper */}
-      <div className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-headings:font-bold prose-h3:text-teal-600 prose-p:text-slate-600 prose-li:text-slate-600 prose-strong:text-slate-800 text-sm leading-relaxed">
+      <div className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-headings:font-extrabold prose-p:text-slate-600 prose-p:leading-relaxed prose-a:text-teal-600 prose-a:no-underline hover:prose-a:underline prose-li:text-slate-600 prose-li:marker:text-teal-500 prose-strong:text-slate-800 prose-blockquote:border-l-4 prose-blockquote:border-teal-400 prose-blockquote:bg-teal-50/50 prose-blockquote:py-2 prose-blockquote:px-5 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-teal-900 prose-blockquote:shadow-sm text-sm leading-relaxed tracking-wide">
         {/* 🧠 105% Safe Extraction Logic */}
         <ReactMarkdown components={customRenderers}>
           {result?.plan || result?.itinerary || (typeof result === 'string' ? result : '')}
