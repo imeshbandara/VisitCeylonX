@@ -15,7 +15,7 @@ const WhySriLanka = () => {
         <div className="lg:col-span-5 relative">
           <div className="sticky top-32">
             <h2 className="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
-              Why should you visit Sri Lanka?
+              Why should you visit <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">Sri Lanka?</span>
             </h2>
           </div>
         </div>
