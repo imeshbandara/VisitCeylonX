@@ -85,6 +85,12 @@ const customRenderers = {
   ul: ({ node, ...props }) => <ul className="list-disc list-outside space-y-2 my-4 ml-5 marker:text-teal-500" {...props} />,
   ol: ({ node, ...props }) => <ol className="list-decimal list-outside space-y-2 my-4 ml-5 marker:text-teal-600 marker:font-semibold" {...props} />,
   li: ({ node, ...props }) => <li className="pl-1 text-slate-700" {...props} />,
+  blockquote: ({ node, ...props }) => (
+    <div className="bg-teal-50/80 border-l-4 border-teal-400 p-4 rounded-r-xl my-6 shadow-sm flex gap-3 text-teal-900">
+      <Sparkles className="text-teal-500 shrink-0 mt-0.5" size={18} />
+      <blockquote className="m-0 border-none p-0 not-italic text-sm font-medium leading-relaxed" {...props} />
+    </div>
+  ),
 };
 
 const AIPlanner = () => {
