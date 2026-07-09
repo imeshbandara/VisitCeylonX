@@ -41,7 +41,7 @@ const WhySriLanka = () => {
             </div>
             <div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">Unrivaled Biodiversity</h3>
-              <p className="text-slate-600 leading-relaxed text-sm">From pristine beaches to wildlife safaris in hours.</p>
+              <p className="text-slate-600 leading-relaxed text-sm">Home to an incredible variety of wildlife, ecosystems, and natural landscapes found within a small island.</p>
             </div>
           </motion.div>
           
@@ -57,7 +57,7 @@ const WhySriLanka = () => {
             </div>
             <div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">2500+ Years of Living History</h3>
-              <p className="text-slate-600 leading-relaxed text-sm">Ancient rock fortresses, temples, and engineering marvels.</p>
+              <p className="text-slate-600 leading-relaxed text-sm">Discover ancient kingdoms, sacred temples, and timeless heritage that have shaped Sri Lanka for over 2,500 years.</p>
             </div>
           </motion.div>
 
@@ -73,7 +73,7 @@ const WhySriLanka = () => {
             </div>
             <div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">The Warmest Hospitality Matrix</h3>
-              <p className="text-slate-600 leading-relaxed text-sm">World-renowned smiles and authentic cultural exchanges.</p>
+              <p className="text-slate-600 leading-relaxed text-sm">Experience the genuine warmth, kindness, and welcoming spirit of Sri Lankan people.</p>
             </div>
           </motion.div>
         </div>
