@@ -14,6 +14,9 @@ const WhySriLanka = () => {
         {/* Left Column (The Hook) */}
         <div className="lg:col-span-5 relative">
           <div className="sticky top-32">
+            <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.15]">
+              Why should you visit Sri Lanka?
+            </h2>
           </div>
         </div>
         
