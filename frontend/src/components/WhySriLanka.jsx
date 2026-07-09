@@ -13,17 +13,23 @@ const WhySriLanka = () => {
       
       {/* Inner Grid Structure */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-8 py-24 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12">
-        {/* Left Column (The Hook) */}
-        <div className="lg:col-span-5 relative">
-          <div className="sticky top-32">
-            <h2 className="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
-              Why should you visit <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">Sri Lanka?</span>
-            </h2>
-            <p className="mt-6 text-slate-500 font-medium text-lg max-w-md leading-relaxed">
-              Discover a land of endless exploration, where ancient temples, dense jungles, and golden beaches coexist in perfect harmony.
-            </p>
-          </div>
-        </div>
+  {/* Left Column (The Hook) */}
+  <div 
+    className="lg:col-span-5 relative overflow-hidden"
+    style={{ width: '7cm', height: '13cm' }}
+  >
+    <div className="sticky top-32">
+      <h2 className="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
+        Why should you visit <br/>
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">
+          Sri Lanka?
+        </span>
+      </h2>
+      <p className="mt-6 text-slate-500 font-medium text-lg max-w-md leading-relaxed">
+        Discover a land of endless exploration, where ancient temples, dense jungles, and golden beaches coexist in perfect harmony.
+      </p>
+    </div>
+  </div>
         
         {/* Right Column (The Matrix) */}
         <div className="lg:col-span-7 flex flex-col gap-8 mt-12 lg:mt-0">
