@@ -82,6 +82,9 @@ const customRenderers = {
     }
     return <strong className="font-extrabold text-slate-900" {...props} />;
   },
+  ul: ({ node, ...props }) => <ul className="list-disc list-outside space-y-2 my-4 ml-5 marker:text-teal-500" {...props} />,
+  ol: ({ node, ...props }) => <ol className="list-decimal list-outside space-y-2 my-4 ml-5 marker:text-teal-600 marker:font-semibold" {...props} />,
+  li: ({ node, ...props }) => <li className="pl-1 text-slate-700" {...props} />,
 };
 
 const AIPlanner = () => {
