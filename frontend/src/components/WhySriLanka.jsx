@@ -2,9 +2,9 @@ import React from 'react';
 
 const WhySriLanka = () => {
   return (
-    <div>
-      {/* Component Skeleton */}
-    </div>
+    <section className="relative min-h-[85vh] flex items-center bg-slate-50 overflow-hidden">
+      {/* Component Content */}
+    </section>
   );
 };
 
