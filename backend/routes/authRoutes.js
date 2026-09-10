@@ -18,7 +18,7 @@ router.post('/google-login', async (req, res) => {
             tourist = new Tourist({
                 fullName: name,
                 email: email,
-                country: "Sri Lanka", // පසුව වෙනස් කරගත හැක
+                country: "Sri Lanka", 
                 password: Math.random().toString(36).slice(-8), // Dummy password
             });
             await tourist.save();

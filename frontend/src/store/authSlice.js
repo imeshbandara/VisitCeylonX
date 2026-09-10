@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// App එක load වෙද්දීම කලින් ලොග් වෙලා හිටපු කෙනෙක්ගේ විස්තර LocalStorage එකේ තියෙනවාදැයි බැලීම
+
 const storedUser = localStorage.getItem('profile') 
   ? JSON.parse(localStorage.getItem('profile')) 
   : null;
@@ -15,7 +15,7 @@ const authSlice = createSlice({
   reducers: {
     // 1. LOGIN / SIGN-IN SUCCESS ACTION
     authLoginSuccess: (state, action) => {
-      // action.payload එකෙන් එන දත්ත LocalStorage එකට දැමීම
+      // action.payload eken ena daththa LocalStorage ekata demima
       localStorage.setItem('profile', JSON.stringify(action.payload));
       state.authData = action.payload;
       state.error = null;
@@ -23,18 +23,18 @@ const authSlice = createSlice({
     
     // 2. LOGOUT ACTION
     authLogout: (state) => {
-      localStorage.removeItem('profile'); // LocalStorage එක ක්ලියර් කිරීම
+      localStorage.removeItem('profile'); // LocalStorage eka clear kirima
       state.authData = null;
       state.error = null;
     },
     
-    // 3. SET AUTH ERROR (සමහර වෙලාවට ලොගින් ෆේල් වුනොත්)
+    // 3. SET AUTH ERROR
     authError: (state, action) => {
       state.error = action.payload;
     }
   }
 });
 
-// Components වලදී පාවිච්චි කිරීමට Actions export කරගැනීම
+// Components waladi pawichchi kirimata Actions export karaganima
 export const { authLoginSuccess, authLogout, authError } = authSlice.actions;
 export default authSlice.reducer;

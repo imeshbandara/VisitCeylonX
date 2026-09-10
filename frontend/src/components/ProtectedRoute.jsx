@@ -1,18 +1,18 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-// 🛠️ REDUX CORE IMPORTS එකතු කරන්න
+// 🛠️ REDUX CORE IMPORTS ekathu kirima
 import { useSelector } from 'react-redux';
 
 const ProtectedRoute = ({ children }) => {
-  // 🎯 Redux Global Store එකෙන් පරිශීලකයා ඉන්නවාදැයි සැබෑ ලෙස චෙක් කිරීම
+  // 🎯 Redux Global Store eken user innawal kiyala hariyatm check kirima
   const { authData } = useSelector((state) => state.auth);
   
-  // Google Auth හෝ Custom Token එකක් හරහා user කෙනෙක් සිටීදැයි බැලීම
+  // Google Auth or Custom Token ekak haraha user kenek innw kiyala balanaw
   const user = authData?.user || authData?.result || authData || localStorage.getItem("user");
 
   if (!user) {
-    // පරිශීලකයා ලොග් වී නැත්නම් ඇලර්ට් එකක් දී ලොගින් පේජ් එකට හරවා යැවීම
+    // user log wel nththn alert ekak denw frontend eka harha 
     alert("Please sign in first to unlock your AI Travel Planner! 🔒");
     return <Navigate to="/login" replace />;
   }
