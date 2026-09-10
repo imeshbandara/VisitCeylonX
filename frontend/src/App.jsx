@@ -17,7 +17,7 @@ import AllPlaces from './pages/AllPlaces';
 import EventDetails from './pages/EventDetails';
 import WeatherGuide from './pages/WeatherGuide.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
-
+import FloatingVoiceAssistant from './components/FloatingVoiceAssistant';
 
 function App() {
 
@@ -27,38 +27,39 @@ function App() {
     intent: "capture",
     "disable-funding": "credit,paylater,venmo",
   };
-  
+
   return (
     <GoogleOAuthProvider clientId="783474425979-spp44uorg59kbpfl5tenakcln2ksclp2.apps.googleusercontent.com">
-    <PayPalScriptProvider options={initialOptions}>
-    <Router>
-      <div className="min-h-screen font-poppins bg-background">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/place/:id" element={<PlaceDetails />} />
-          <Route path="/guides" element={<GuidePage />} />
-          <Route path="/register" element={<RegisterSelect />} />
-          <Route path="/register/guide" element={<GuideRegisterForm />} />
-          <Route path="/register/tourist" element={<TouristRegisterForm />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/all-places" element={<AllPlaces />} />
-          <Route path="/event/:id" element={<EventDetails />} />
-          <Route path="/weather-guide" element={<WeatherGuide />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route 
-              path="/planner" 
-              element={
-                <ProtectedRoute>
-                  <AIPlanner />
-                </ProtectedRoute>
-              } 
-            />
-          </Routes>
-          <Footer />
+      <PayPalScriptProvider options={initialOptions}>
+        <Router>
+          <div className="min-h-screen font-poppins bg-background">
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/place/:id" element={<PlaceDetails />} />
+              <Route path="/guides" element={<GuidePage />} />
+              <Route path="/register" element={<RegisterSelect />} />
+              <Route path="/register/guide" element={<GuideRegisterForm />} />
+              <Route path="/register/tourist" element={<TouristRegisterForm />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/all-places" element={<AllPlaces />} />
+              <Route path="/event/:id" element={<EventDetails />} />
+              <Route path="/weather-guide" element={<WeatherGuide />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route
+                path="/planner"
+                element={
+                  <ProtectedRoute>
+                    <AIPlanner />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+            <Footer />
+            <FloatingVoiceAssistant />
           </div>
-         </Router>
-    </PayPalScriptProvider>
+        </Router>
+      </PayPalScriptProvider>
     </GoogleOAuthProvider>
   );
 }
